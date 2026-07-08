@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<!-- saved from url=(0091)https://pages.github.tools.sap/D046162/Joule-Flow/scenarios/invoice_exception_workflow.html -->
+<html lang="en" class=" zjdxb idc0_350"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Invoice Exception — Agentic Workflow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: '72', Arial, sans-serif;
+    background: #f0f2f5;
+    padding: 32px;
+  }
+
+  .page {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 1500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #e8eaed;
+  }
+
+  .title-block h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+  .title-block p  { font-size: 12px; color: #6b7280; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #374151; }
+  .legend-dot  { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── Exception type cards ── */
+  .exception-types {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .exc-card {
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 2px solid;
+  }
+
+  .exc-card .ec-icon  { font-size: 18px; margin-bottom: 4px; }
+  .exc-card .ec-title { font-size: 11px; font-weight: 700; color: #1a1a2e; margin-bottom: 2px; }
+  .exc-card .ec-sub   { font-size: 8.5px; color: #6b7280; line-height: 1.4; }
+  .exc-card .ec-vol   { font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 8px; margin-top: 5px; display: inline-block; }
+
+  .ec-price   { background: #fef3c7; border-color: #d97706; }
+  .ec-grir    { background: #eff6ff; border-color: #0a6ed1; }
+  .ec-dup     { background: #f0fdf4; border-color: #16a34a; }
+  .ec-missingpo { background: #fdf4ff; border-color: #7c3aed; }
+  .ec-vendor  { background: #fff7f5; border-color: #dc2626; }
+
+  /* ── Challenge / Experience section ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+  .challenge-panel {
+    background: #fff7f5; border: 2px solid #dc2626;
+    border-radius: 12px; padding: 16px 18px;
+  }
+
+  .challenge-panel-title {
+    font-size: 12px; font-weight: 700; color: #dc2626;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+  }
+
+  .challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .challenge-card {
+    background: white; border: 1px solid #fca5a5;
+    border-radius: 8px; padding: 8px 10px;
+  }
+
+  .challenge-card .cc-icon  { font-size: 16px; margin-bottom: 3px; }
+  .challenge-card .cc-title { font-size: 9.5px; font-weight: 700; color: #dc2626; margin-bottom: 3px; }
+  .challenge-card .cc-body  { font-size: 8.5px; color: #374151; line-height: 1.45; }
+
+  .experience-panel {
+    background: #f0fdf4; border: 2px solid #16a34a;
+    border-radius: 12px; padding: 16px 18px;
+  }
+
+  .experience-panel-title {
+    font-size: 12px; font-weight: 700; color: #16a34a;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+  }
+
+  .journey-row { display: flex; gap: 0; align-items: flex-start; margin-bottom: 14px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+
+  .journey-step { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+
+  .journey-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; color: white; flex-shrink: 0; }
+  .journey-line { width: 24px; height: 2px; background: #d1d5db; margin-top: 16px; flex-shrink: 0; }
+
+  .journey-content { display: flex; flex-direction: column; max-width: 78px; margin-top: 4px; }
+  .journey-content .jc-title { font-size: 8px; font-weight: 700; color: #1f2937; text-align: center; line-height: 1.2; }
+  .journey-content .jc-sub   { font-size: 7.5px; color: #6b7280; text-align: center; margin-top: 2px; line-height: 1.2; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+
+  .metric-card {
+    background: white; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 8px 10px; text-align: center;
+  }
+
+  .metric-card .mc-num   { font-size: 20px; font-weight: 700; }
+  .metric-card .mc-label { font-size: 8px; color: #6b7280; margin-top: 2px; line-height: 1.3; }
+
+  .compare-strip {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 10px; align-items: center;
+    background: #1a1a2e; border-radius: 10px;
+    padding: 14px 16px; margin-top: 0;
+  }
+
+  .compare-col { display: flex; flex-direction: column; gap: 5px; }
+
+  .compare-item-before {
+    display: flex; align-items: flex-start; gap: 6px;
+    background: rgba(220,38,38,0.15); border-radius: 6px;
+    padding: 5px 8px; font-size: 8.5px; color: #fca5a5; line-height: 1.4;
+  }
+
+  .compare-item-after {
+    display: flex; align-items: flex-start; gap: 6px;
+    background: rgba(22,163,74,0.15); border-radius: 6px;
+    padding: 5px 8px; font-size: 8.5px; color: #86efac; line-height: 1.4;
+  }
+
+  .compare-arrow { font-size: 24px; color: #d97706; font-weight: 700; text-align: center; flex-shrink: 0; }
+  .compare-col-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+
+  /* ── Phase strip ── */
+  .phase-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .phase-pill {
+    border-radius: 10px; padding: 10px;
+    text-align: center; color: white;
+  }
+
+  .phase-pill .ph-num   { font-size: 9px; font-weight: 700; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .phase-pill .ph-title { font-size: 13px; font-weight: 700; margin: 3px 0; line-height: 1.2; }
+  .phase-pill .ph-sub   { font-size: 9px; opacity: 0.85; line-height: 1.3; }
+
+  /* ── Phase sections ── */
+  .phase-section { margin-bottom: 20px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+
+  .phase-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 18px; color: white;
+  }
+
+  .ph-badge { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 2px 10px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .ph-name  { font-size: 14px; font-weight: 700; }
+  .ph-desc  { font-size: 11px; opacity: 0.85; margin-left: auto; font-style: italic; }
+
+  .phase-body { padding: 18px 18px; background: white; }
+
+  /* ── Nodes ── */
+  .node {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; border-radius: 9px;
+    padding: 8px 9px; flex-shrink: 0;
+  }
+
+  .node .n-icon  { font-size: 18px; margin-bottom: 3px; }
+  .node .n-title { font-size: 9.5px; font-weight: 700; color: white; line-height: 1.25; }
+  .node .n-sub   { font-size: 8px; color: rgba(255,255,255,0.82); margin-top: 2px; line-height: 1.2; max-width: 90px; }
+
+  .node-trigger   { background:#0a6ed1; border:2px solid #0057a8; width:92px; min-height:68px; }
+  .node-agent     { background:#16a34a; border:2px solid #15803d; width:92px; min-height:72px; }
+  .node-human     { background:#7c3aed; border:2px dashed #6d28d9; width:100px; min-height:76px; }
+  .node-action    { background:#dc2626; border:2px solid #b91c1c; width:92px; min-height:68px; }
+  .node-scheduler { background:#6366f1; border:2px solid #4f46e5; width:92px; min-height:68px; }
+  .node-notify    { background:#be185d; border:2px solid #9d174d; width:92px; min-height:68px; }
+  .node-docgen    { background:#b45309; border:2px solid #92400e; width:92px; min-height:68px; }
+  .node-end       { background:#1f2937; border:3px solid #374151; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; }
+
+  .node-gateway-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
+  .node-gateway {
+    background:#d97706; border:2px solid #b45309;
+    transform:rotate(45deg); width:48px; height:48px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .node-gateway .gw-inner { transform:rotate(-45deg); font-size:7.5px; font-weight:700; color:white; text-align:center; line-height:1.2; }
+
+  /* ── Group boxes ── */
+  .parallel-box {
+    border: 2px dashed #16a34a; border-radius: 10px;
+    padding: 10px 12px; background: rgba(22,163,74,0.04); flex-shrink: 0;
+  }
+
+  .parallel-box .pb-title { font-size: 9px; font-weight: 700; color: #16a34a; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .parallel-box .pb-row   { display: flex; gap: 8px; align-items: flex-start; }
+
+  .exec-box {
+    border: 2px dashed #0a6ed1; border-radius: 10px;
+    padding: 10px 12px; background: rgba(10,110,209,0.04); flex-shrink: 0;
+  }
+
+  .exec-box .eb-title { font-size: 9px; font-weight: 700; color: #0a6ed1; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .exec-box .eb-row   { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+
+  /* ── Exception routing table ── */
+  .routing-table { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+
+  .rt-header {
+    display: grid;
+    grid-template-columns: 130px 80px 100px 100px 120px;
+    background: #1a1a2e;
+  }
+
+  .rt-header div { padding: 6px 8px; font-size: 8.5px; font-weight: 700; color: white; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); }
+
+  .rt-row {
+    display: grid;
+    grid-template-columns: 130px 80px 100px 100px 120px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .rt-row:nth-child(even) { background: #f9fafb; }
+
+  .rt-row div { padding: 5px 8px; font-size: 8px; border-right: 1px solid #e5e7eb; text-align: center; display: flex; align-items: center; justify-content: center; line-height: 1.3; }
+  .rt-row div:first-child { font-weight: 700; color: #1a1a2e; justify-content: flex-start; padding-left: 10px; }
+
+  .rt-auto    { color: #16a34a; font-weight: 700; font-size: 10px; }
+  .rt-human   { color: #7c3aed; font-weight: 700; font-size: 10px; }
+  .rt-escalate { color: #dc2626; font-weight: 700; font-size: 10px; }
+
+  /* ── Autonomy meter ── */
+  .autonomy-bar {
+    height: 10px; border-radius: 5px;
+    background: linear-gradient(90deg, #16a34a, #22c55e);
+    margin-top: 4px;
+  }
+
+  /* ── Flow row ── */
+  .flow-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  /* ── Arrow ── */
+  .arr { font-size: 20px; color: #9ca3af; flex-shrink: 0; display: flex; align-items: center; }
+
+  /* ── Badges ── */
+  .badge        { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 700; margin-top: 3px; white-space: nowrap; }
+  .badge-auto   { background:#dcfce7; color:#166534; }
+  .badge-human  { background:#ede9fe; color:#5b21b6; }
+  .badge-system { background:#fee2e2; color:#991b1b; }
+
+  .hm-badge { background: #7c3aed; color: white; border-radius: 20px; padding: 2px 8px; font-size: 8px; font-weight: 700; white-space: nowrap; }
+
+  /* ── S/4 bubble ── */
+  .sys-bubble {
+    display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0;
+  }
+  .sys-avatar {
+    background: #1a1a2e; color: white; border-radius: 10px;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; text-align: center;
+    line-height: 1.2;
+  }
+
+  /* ── Task Center preview ── */
+  .task-preview {
+    background: #faf5ff; border: 1px solid #c4b5fd;
+    border-radius: 10px; padding: 12px;
+    max-width: 260px; flex-shrink: 0;
+  }
+
+  /* ── Section note ── */
+  .section-note { background: #f8fafc; border-left: 3px solid #0a6ed1; border-radius: 4px; padding: 6px 10px; font-size: 9px; color: #374151; margin-top: 10px; line-height: 1.5; }
+
+  /* ── Phase connector ── */
+  .phase-connector { display: flex; justify-content: center; margin: -6px 0; font-size: 22px; color: #9ca3af; position: relative; z-index: 2; }
+
+  /* ── Footer ── */
+  .footer { margin-top: 24px; padding-top: 18px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+  .human-moments { display: flex; flex-direction: column; gap: 5px; }
+  .human-moments h4 { font-size: 10px; font-weight: 700; color: #374151; margin-bottom: 3px; }
+  .hm-row { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #374151; }
+  .hm-num { background: #7c3aed; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .source-note { font-size: 10px; color: #9ca3af; text-align: right; }
+
+  /* Phase colours */
+  .p1-color { background: #1a1a2e; }
+  .p2-color { background: #16a34a; }
+  .p3-color { background: #d97706; }
+  .p4-color { background: #7c3aed; }
+  .p5-color { background: #dc2626; }
+  .p6-color { background: #0a6ed1; }
+</style>
+<script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/Injected/IRPA_FrameworkHelper.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/Injected/Injected.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/CxCapture.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/CxSnapshot.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/CxCaptureUI5.js" async=""></script></head>
+<body data-new-gr-c-s-check-loaded="14.1308.0" data-gr-ext-installed="">
+<div class="page">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header">
+    <div class="title-block">
+      <h1>AP Invoice Exception Management — Agentic Workflow</h1>
+      <p>Five phases · S/4HANA Cloud event trigger → Agent analysis → Human decision → Autonomous execution → Escalation management · Joule Flow + SAP Ariba + SuccessFactors + Fieldglass + Concur</p>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#0a6ed1;border-radius:50%;"></div>Trigger / JF</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Agent (auto)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;border:2px dashed #6d28d9;"></div>Human Task</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d97706;border-radius:2px;transform:rotate(45deg);"></div>Gateway</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>System Action</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div>Scheduler</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#be185d;"></div>Notification</div>
+    </div>
+  </div>
+
+  <!-- ═══ CHALLENGES + AP CLERK EXPERIENCE ═══ -->
+  <div class="two-col">
+
+    <!-- LEFT: Key Challenges -->
+    <div class="challenge-panel">
+      <div class="challenge-panel-title"><span style="font-size:18px;">⚠️</span> Key Challenges in AP Invoice Exception Management Today</div>
+      <div class="challenge-grid">
+
+        <div class="challenge-card">
+          <div class="cc-icon">📧</div>
+          <div class="cc-title">Exceptions Managed in Email</div>
+          <div class="cc-body">AP clerks discover blocked invoices by checking S/4HANA manually or via email from vendors. No systematic detection. Invoices sit unnoticed for days causing payment delays and vendor relationship damage.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">🔍</div>
+          <div class="cc-title">45 Minutes Research Per Exception</div>
+          <div class="cc-body">For each blocked invoice: open S/4HANA, find the PO, check the GR, open Ariba for the contract, read the clause, calculate the variance, determine the resolution. All manual. All repetitive. All for information the system already has.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">📅</div>
+          <div class="cc-title">No SLA Enforcement</div>
+          <div class="cc-body">Invoices blocked for days without action. Vendors call to chase payment. AP managers have no visibility of which exceptions are open, how long they have been pending, or which are at risk of breaching the payment terms deadline.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">🔁</div>
+          <div class="cc-title">Duplicate Invoices Paid</div>
+          <div class="cc-body">Vendors resubmit invoices they believe unpaid. Without pattern detection, duplicates slip through — especially across different invoice numbering formats or slightly different amounts. Industry average: 0.1–0.5% of invoices are duplicates.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">📊</div>
+          <div class="cc-title">No Root Cause Visibility</div>
+          <div class="cc-body">Exceptions resolved one at a time with no pattern analysis. The same vendor causes 30 price exceptions in a quarter — nobody connects the dots. Systemic issues (outdated pricing, recurring GR delays) are never escalated to be fixed upstream.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">💬</div>
+          <div class="cc-title">Vendor Communication Manual and Inconsistent</div>
+          <div class="cc-body">Each AP clerk writes their own rejection emails. No standard format, no consistent contract clause references, different tone and quality across the team. Vendors receive inconsistent messages that lead to disputes and repeat exceptions.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">📂</div>
+          <div class="cc-title">Audit Trail Gaps</div>
+          <div class="cc-body">Decision reasoning lives in email threads and personal notes. When an auditor asks "why was this invoice rejected and what evidence supported that decision?" — the answer requires hours of searching. Compliance exposure in regulated industries.</div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="cc-icon">💸</div>
+          <div class="cc-title">Early Payment Discounts Missed</div>
+          <div class="cc-body">Blocked invoices cannot be paid early. A 2/10 net 30 discount on a €50,000 invoice is worth €1,000 — annualised return of 36%. AP teams processing exceptions manually rarely have time to optimise payment timing for discount capture.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: AP Clerk Experience + Metrics -->
+    <div class="experience-panel">
+      <div class="experience-panel-title"><span style="font-size:18px;">👩‍💼</span> AP Clerk Experience — Today vs With Joule Flow</div>
+
+      <!-- Today journey -->
+      <div style="font-size:9px;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;">😟 Today — AP Clerk's Monday Morning</div>
+      <div class="journey-row">
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#dc2626;">📬</div>
+          <div class="journey-content"><div class="jc-title">Opens inbox</div><div class="jc-sub">47 unread vendor emails about blocked invoices</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#dc2626;">🖥️</div>
+          <div class="journey-content"><div class="jc-title">Logs into S/4HANA</div><div class="jc-sub">Checks blocked invoice report manually</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#dc2626;">🔍</div>
+          <div class="journey-content"><div class="jc-title">Researches each one</div><div class="jc-sub">PO · GR · Ariba contract · 45 min each</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#dc2626;">📧</div>
+          <div class="journey-content"><div class="jc-title">Writes rejection email</div><div class="jc-sub">No template · inconsistent · no contract ref</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#dc2626;">⏰</div>
+          <div class="journey-content"><div class="jc-title">End of day</div><div class="jc-sub">Processed 6 exceptions. 41 still pending.</div></div>
+        </div>
+      </div>
+
+      <!-- Joule Flow journey -->
+      <div style="font-size:9px;font-weight:700;color:#16a34a;margin-top:10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;">😊 With Joule Flow — Same Monday Morning</div>
+      <div class="journey-row">
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#16a34a;">📱</div>
+          <div class="journey-content"><div class="jc-title">Opens Task Center</div><div class="jc-sub">2 exceptions need her decision · 45 auto-resolved overnight</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#16a34a;">🤖</div>
+          <div class="journey-content"><div class="jc-title">Agent findings ready</div><div class="jc-sub">Root cause · evidence · recommendation · vendor letter drafted</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#16a34a;">⚡</div>
+          <div class="journey-content"><div class="jc-title">90-second decision</div><div class="jc-sub">Reviews agent output · clicks Reject · done</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#16a34a;">📧</div>
+          <div class="journey-content"><div class="jc-title">Vendor notified auto</div><div class="jc-sub">Agent-drafted letter with contract clause · in vendor language</div></div>
+        </div>
+        <div class="journey-line"></div>
+        <div class="journey-step">
+          <div class="journey-dot" style="background:#16a34a;">☕</div>
+          <div class="journey-content"><div class="jc-title">09:05 — done</div><div class="jc-sub">47 invoices resolved. Morning free for strategic work.</div></div>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div style="font-size:9px;font-weight:700;color:#374151;margin-top:10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;">Business Impact Metrics</div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="mc-num" style="color:#dc2626;">45 min</div>
+          <div class="mc-label">→ <strong style="color:#16a34a;">90 sec</strong><br>Time per exception</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-num" style="color:#dc2626;">20%</div>
+          <div class="mc-label">→ <strong style="color:#16a34a;">80%</strong><br>Autonomous resolution rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-num" style="color:#dc2626;">3–5 days</div>
+          <div class="mc-label">→ <strong style="color:#16a34a;">Minutes</strong><br>Exception resolution time</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-num" style="color:#dc2626;">0.5%</div>
+          <div class="mc-label">→ <strong style="color:#16a34a;">~0%</strong><br>Duplicate invoices paid</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-num" style="color:#dc2626;">15%</div>
+          <div class="mc-label">→ <strong style="color:#16a34a;">90%</strong><br>Early payment discount capture</div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-num" style="color:#dc2626;">Partial</div>
+          <div class="mc-label">→ <strong style="color:#16a34a;">Complete</strong><br>Audit trail per exception</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Before / After comparison strip -->
+  <div class="compare-strip" style="margin-bottom:24px;">
+    <div class="compare-col">
+      <div class="compare-col-title" style="color:#f87171;">😟 Today — Without Joule Flow</div>
+      <div class="compare-item-before"><span>🕵️</span> AP clerk manually monitors S/4HANA for blocked invoices — some missed for days</div>
+      <div class="compare-item-before"><span>🔍</span> 45 minutes researching PO, GR, contract, and vendor history per exception</div>
+      <div class="compare-item-before"><span>📧</span> Inconsistent vendor communications — no standard, no contract references</div>
+      <div class="compare-item-before"><span>🔁</span> Duplicate invoices paid — no systematic pattern detection across invoice history</div>
+      <div class="compare-item-before"><span>📊</span> No visibility — AP manager cannot see open exceptions or SLA risk in real time</div>
+      <div class="compare-item-before"><span>📂</span> Audit trail in email threads — hours to reconstruct for external audit</div>
+      <div class="compare-item-before"><span>💸</span> Early payment discounts missed — invoices blocked when discount window closes</div>
+    </div>
+    <div class="compare-arrow">→</div>
+    <div class="compare-col">
+      <div class="compare-col-title" style="color:#86efac;">😊 With Joule Flow — Agentic Workflow</div>
+      <div class="compare-item-after"><span>⚡</span> Every blocked invoice triggers a workflow automatically — zero manual monitoring</div>
+      <div class="compare-item-after"><span>🤖</span> Agent researches in 60 seconds — root cause, recommendation, vendor letter ready</div>
+      <div class="compare-item-after"><span>📝</span> Professional vendor letter drafted by agent — contract clause cited, correct language</div>
+      <div class="compare-item-after"><span>✅</span> Duplicate detection at 99%+ accuracy — protected before payment runs</div>
+      <div class="compare-item-after"><span>📊</span> Real-time AP dashboard — every exception, SLA status, agent confidence, value at risk</div>
+      <div class="compare-item-after"><span>📋</span> Complete audit package built automatically — agent reasoning stored per exception</div>
+      <div class="compare-item-after"><span>💶</span> Early payment discount optimised — agent calculates ROI, recommends pay date</div>
+    </div>
+  </div>
+
+  <!-- ═══ EXCEPTION TYPE CARDS ═══ -->
+  <div style="margin-bottom:18px;">
+    <div style="font-size:10px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Invoice Exception Types — One Workflow Handles All</div>
+    <div class="exception-types">
+
+      <div class="exc-card ec-price">
+        <div class="ec-icon">💰</div>
+        <div class="ec-title">Price Mismatch</div>
+        <div class="ec-sub">Invoice price exceeds PO price. Tolerance check. Contract clause validation via Ariba.</div>
+        <div class="ec-vol" style="background:#d97706;color:white;">~30% of exceptions</div>
+      </div>
+
+      <div class="exc-card ec-grir">
+        <div class="ec-icon">📦</div>
+        <div class="ec-title">GRIR / Quantity Variance</div>
+        <div class="ec-sub">Goods received quantity differs from invoiced quantity. GR confirmation pending.</div>
+        <div class="ec-vol" style="background:#0a6ed1;color:white;">~25% of exceptions</div>
+      </div>
+
+      <div class="exc-card ec-dup">
+        <div class="ec-icon">🔁</div>
+        <div class="ec-title">Duplicate Invoice</div>
+        <div class="ec-sub">Same invoice submitted twice. Agent detects from invoice number, amount, vendor, date patterns.</div>
+        <div class="ec-vol" style="background:#16a34a;color:white;">~20% of exceptions</div>
+      </div>
+
+      <div class="exc-card ec-missingpo">
+        <div class="ec-icon">🔍</div>
+        <div class="ec-title">Missing PO</div>
+        <div class="ec-sub">Invoice received with no matching purchase order. Buyer must create or confirm PO.</div>
+        <div class="ec-vol" style="background:#7c3aed;color:white;">~15% of exceptions</div>
+      </div>
+
+      <div class="exc-card ec-vendor">
+        <div class="ec-icon">🏢</div>
+        <div class="ec-title">Vendor / Compliance Issue</div>
+        <div class="ec-sub">Blocked vendor, expired certification, sanctions check, uncontracted surcharge.</div>
+        <div class="ec-vol" style="background:#dc2626;color:white;">~10% of exceptions</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ PHASE STRIP ═══ -->
+  <div class="phase-strip">
+    <div class="phase-pill p1-color">
+      <div class="ph-num">Phase 1</div>
+      <div class="ph-title">Detection &amp; Trigger</div>
+      <div class="ph-sub">S/4HANA event or scheduler → workflow starts automatically</div>
+    </div>
+    <div class="phase-pill p2-color">
+      <div class="ph-num">Phase 2</div>
+      <div class="ph-title">Agent Analysis</div>
+      <div class="ph-sub">3 agents in parallel → root cause + recommendation + confidence</div>
+    </div>
+    <div class="phase-pill p3-color">
+      <div class="ph-num">Phase 3</div>
+      <div class="ph-title">Routing Decision</div>
+      <div class="ph-sub">Autonomous resolve · AP Clerk review · Buyer escalation · Manager</div>
+    </div>
+    <div class="phase-pill p4-color">
+      <div class="ph-num">Phase 4</div>
+      <div class="ph-title">Human Task</div>
+      <div class="ph-sub">AP Clerk in Task Center · Agent findings · 90-second decision</div>
+    </div>
+    <div class="phase-pill p5-color">
+      <div class="ph-num">Phase 5</div>
+      <div class="ph-title">Resolution &amp; Escalation</div>
+      <div class="ph-sub">S/4HANA updated · Vendor notified · Boundary events for SLA</div>
+    </div>
+  </div>
+
+  <!-- ═══ PHASE 1: DETECTION ═══ -->
+  <div class="phase-section">
+    <div class="phase-header p1-color">
+      <div class="ph-badge">Phase 1</div>
+      <div class="ph-name">Detection &amp; Trigger — "Invoice blocked in S/4HANA"</div>
+      <div class="ph-desc">Real-time event or nightly batch · All exception types · Zero manual monitoring</div>
+    </div>
+    <div class="phase-body">
+      <div class="flow-row">
+
+        <!-- S/4HANA source -->
+        <div class="sys-bubble">
+          <div class="sys-avatar">S/4<br>HANA<br>Cloud</div>
+          <div style="font-size:8.5px;font-weight:600;text-align:center;max-width:70px;color:#374151;">Invoice blocked</div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Two trigger types -->
+        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="node node-trigger" style="width:104px;min-height:64px;">
+              <div class="n-icon">⚡</div>
+              <div class="n-title">Real-Time Event Trigger</div>
+              <div class="n-sub">InvoiceException.Created via SAP Event Mesh</div>
+            </div>
+            <span class="badge badge-auto">Immediate</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="node node-scheduler" style="width:104px;min-height:64px;">
+              <div class="n-icon">📅</div>
+              <div class="n-title">Scheduled Batch Trigger</div>
+              <div class="n-sub">Nightly sweep all blocked invoices S/4HANA MCP</div>
+            </div>
+            <span class="badge badge-auto">Daily 06:00</span>
+          </div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Read invoice data -->
+        <div class="parallel-box">
+          <div class="pb-title">⚡ Read invoice context — all sources simultaneously</div>
+          <div class="pb-row">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="node node-action" style="width:96px;min-height:80px;">
+                <div class="n-icon">📄</div>
+                <div class="n-title">S/4HANA MCP</div>
+                <div class="n-sub">Invoice · PO · GR Vendor master Tolerance rules</div>
+              </div>
+              <span class="badge badge-system" style="font-size:7px;">Invoice data</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="node node-action" style="width:96px;min-height:80px;">
+                <div class="n-icon">🤝</div>
+                <div class="n-title">Ariba MCP</div>
+                <div class="n-sub">Contract pricing Supplier terms Delivery confirm</div>
+              </div>
+              <span class="badge badge-system" style="font-size:7px;">Contract data</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="node node-action" style="width:96px;min-height:80px;">
+                <div class="n-icon">📋</div>
+                <div class="n-title">Fieldglass / Concur MCP</div>
+                <div class="n-sub">Contractor timesheets Expense reports</div>
+              </div>
+              <span class="badge badge-system" style="font-size:7px;">If applicable</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Invoice profile -->
+        <div style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;padding:10px;max-width:180px;flex-shrink:0;">
+          <div style="font-size:9px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Invoice Profile Ready</div>
+          <div style="display:flex;flex-direction:column;gap:3px;font-size:8px;color:#374151;">
+            <div>📌 INV-7823 · ACME Corp</div>
+            <div>💶 €142,000</div>
+            <div>📦 PO-89012 found</div>
+            <div>🔴 Exception: Price +18%</div>
+            <div>📎 Invoice PDF attached</div>
+            <div>📋 Contract C-89456 found</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="section-note"><strong>No manual monitoring:</strong> AP clerks no longer check S/4HANA for blocked invoices. Every blocked invoice — price mismatch, duplicate, missing PO, GRIR, vendor block — starts a Joule Flow workflow automatically within seconds of blocking.</div>
+    </div>
+  </div>
+
+  <div class="phase-connector">↓</div>
+
+  <!-- ═══ PHASE 2: AGENT ANALYSIS ═══ -->
+  <div class="phase-section">
+    <div class="phase-header p2-color">
+      <div class="ph-badge">Phase 2</div>
+      <div class="ph-name">Agent Analysis — Root Cause + Recommendation + Confidence</div>
+      <div class="ph-desc">3 agents in parallel · Reads invoice PDF + PO + contract + vendor history · ~60 seconds</div>
+    </div>
+    <div class="phase-body">
+      <div class="flow-row">
+
+        <!-- Three parallel agents -->
+        <div class="parallel-box" style="flex:1;">
+          <div class="pb-title">⚡ 3 specialist agents running in parallel — ~60 seconds total</div>
+          <div class="pb-row" style="justify-content:center;">
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="node node-agent" style="width:108px;min-height:92px;">
+                <div class="n-icon">🔍</div>
+                <div class="n-title">Invoice Analysis Agent</div>
+                <div class="n-sub">Reads invoice PDF Matches PO line items Checks contract pricing Detects surcharges</div>
+              </div>
+              <div style="font-size:8px;color:#16a34a;font-weight:700;text-align:center;max-width:106px;">Root cause identified Exception type classified</div>
+            </div>
+
+            <div style="width:1px;background:#d1d5db;height:92px;margin-top:10px;"></div>
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="node node-agent" style="width:108px;min-height:92px;">
+                <div class="n-icon">🏢</div>
+                <div class="n-title">Vendor Risk Agent</div>
+                <div class="n-sub">Vendor payment history Compliance status Fraud indicators Bank detail changes</div>
+              </div>
+              <div style="font-size:8px;color:#16a34a;font-weight:700;text-align:center;max-width:106px;">Vendor risk score Low / Medium / High</div>
+            </div>
+
+            <div style="width:1px;background:#d1d5db;height:92px;margin-top:10px;"></div>
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div class="node node-agent" style="width:108px;min-height:92px;">
+                <div class="n-icon">💡</div>
+                <div class="n-title">Resolution Agent</div>
+                <div class="n-sub">Determines resolution path Calculates correct amount Drafts vendor communication</div>
+              </div>
+              <div style="font-size:8px;color:#16a34a;font-weight:700;text-align:center;max-width:106px;">Recommendation + confidence Vendor letter drafted</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Agent output -->
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px;max-width:240px;flex-shrink:0;">
+          <div style="font-size:9px;font-weight:700;color:#16a34a;margin-bottom:8px;">Agent Output — INV-7823</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;"><span style="font-weight:700;">Root cause:</span> Expedite surcharge €14,200 — not in PO or contract clause 4.2</div>
+            <div style="font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;"><span style="font-weight:700;">Recommendation:</span> Reject line 3 · Accept €127,800</div>
+            <div style="font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;"><span style="font-weight:700;">Vendor risk:</span> Low — 98% payment history</div>
+            <div style="font-size:8px;padding:3px 6px;background:#fef3c7;border-radius:4px;border:1px solid #d97706;"><span style="font-weight:700;color:#92400e;">Confidence:</span> <span style="color:#d97706;font-weight:700;">94%</span></div>
+            <div style="font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;"><span style="font-weight:700;">Vendor letter:</span> Drafted in German ✓</div>
+            <div style="font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;"><span style="font-weight:700;">Evidence:</span> Contract §4.2 · PO-89012</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="section-note"><strong>Agent reads documents, not just fields:</strong> The Invoice Analysis Agent reads the actual invoice PDF and the Ariba contract document — not just structured data fields. It identifies the surcharge that only appears in the PDF line item description, then cross-references contract clause 4.2 to confirm it is prohibited. This is the finding a human would take 45 minutes to reach. The agent reaches it in 60 seconds.</div>
+    </div>
+  </div>
+
+  <div class="phase-connector">↓</div>
+
+  <!-- ═══ PHASE 3: ROUTING ═══ -->
+  <div class="phase-section">
+    <div class="phase-header p3-color">
+      <div class="ph-badge">Phase 3</div>
+      <div class="ph-name">Routing Decision — Autonomous or Human Based on Confidence + Amount + Type</div>
+      <div class="ph-desc">Four routing paths · Confidence threshold · Amount threshold · Exception type rules</div>
+    </div>
+    <div class="phase-body">
+      <div class="flow-row" style="margin-bottom:16px;">
+
+        <!-- Routing gateway -->
+        <div class="node-gateway-wrap">
+          <div class="node-gateway" style="width:52px;height:52px;">
+            <div class="gw-inner">Route?</div>
+          </div>
+          <div style="font-size:8px;color:#d97706;font-weight:700;text-align:center;max-width:70px;margin-top:4px;">Conf · Amount · Type · Vendor risk</div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Four paths -->
+        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:380px;">
+
+          <!-- Path 1: Autonomous -->
+          <div style="display:flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:6px 10px;">
+            <div style="font-size:9px;font-weight:700;color:#16a34a;white-space:nowrap;min-width:110px;">Auto-resolve →</div>
+            <div style="font-size:8px;color:#374151;line-height:1.4;">Confidence &gt;95% AND amount &lt;€25K AND duplicate OR tolerance &lt;5%</div>
+            <div style="margin-left:auto;flex-shrink:0;">
+              <span style="background:#16a34a;color:white;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:700;">No human needed</span>
+            </div>
+          </div>
+
+          <!-- Path 2: AP Clerk -->
+          <div style="display:flex;align-items:center;gap:8px;background:#fdf4ff;border:1px solid #c4b5fd;border-radius:8px;padding:6px 10px;">
+            <div style="font-size:9px;font-weight:700;color:#7c3aed;white-space:nowrap;min-width:110px;">AP Clerk review →</div>
+            <div style="font-size:8px;color:#374151;line-height:1.4;">Confidence 80–95% OR amount €25K–€100K · Agent package prepared</div>
+            <div style="margin-left:auto;flex-shrink:0;">
+              <span class="hm-badge" style="font-size:8px;">Human 1</span>
+            </div>
+          </div>
+
+          <!-- Path 3: Buyer -->
+          <div style="display:flex;align-items:center;gap:8px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:6px 10px;">
+            <div style="font-size:9px;font-weight:700;color:#d97706;white-space:nowrap;min-width:110px;">Buyer escalation →</div>
+            <div style="font-size:8px;color:#374151;line-height:1.4;">Missing PO · New vendor · Contract dispute requiring buyer decision</div>
+            <div style="margin-left:auto;flex-shrink:0;">
+              <span class="hm-badge" style="font-size:8px;">Human 2</span>
+            </div>
+          </div>
+
+          <!-- Path 4: AP Manager -->
+          <div style="display:flex;align-items:center;gap:8px;background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:6px 10px;">
+            <div style="font-size:9px;font-weight:700;color:#dc2626;white-space:nowrap;min-width:110px;">AP Manager →</div>
+            <div style="font-size:8px;color:#374151;line-height:1.4;">Amount &gt;€100K OR confidence &lt;80% OR high vendor risk OR legal dispute</div>
+            <div style="margin-left:auto;flex-shrink:0;">
+              <span class="hm-badge" style="font-size:8px;">Human 3</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Routing matrix -->
+      <div style="font-size:9px;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;">Exception Type → Routing Path</div>
+      <div class="routing-table">
+        <div class="rt-header">
+          <div style="text-align:left;padding-left:10px;">Exception Type</div>
+          <div>Volume</div>
+          <div>Auto-Resolve</div>
+          <div>AP Clerk</div>
+          <div>Buyer / Manager</div>
+        </div>
+        <div class="rt-row">
+          <div>💰 Price mismatch &lt;5%</div>
+          <div style="font-size:8px;">~15%</div>
+          <div><span class="rt-auto">✓ Auto</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+        </div>
+        <div class="rt-row">
+          <div>💰 Price mismatch &gt;5%</div>
+          <div style="font-size:8px;">~15%</div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span class="rt-human">✓ Clerk</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+        </div>
+        <div class="rt-row">
+          <div>📦 GRIR / Qty variance &lt;3%</div>
+          <div style="font-size:8px;">~15%</div>
+          <div><span class="rt-auto">✓ Auto</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+        </div>
+        <div class="rt-row">
+          <div>📦 GRIR / Qty variance &gt;3%</div>
+          <div style="font-size:8px;">~10%</div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span class="rt-human">✓ Clerk</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+        </div>
+        <div class="rt-row">
+          <div>🔁 Duplicate invoice</div>
+          <div style="font-size:8px;">~20%</div>
+          <div><span class="rt-auto">✓ Auto</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+        </div>
+        <div class="rt-row">
+          <div>🔍 Missing PO</div>
+          <div style="font-size:8px;">~15%</div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span class="rt-escalate">✓ Buyer</span></div>
+        </div>
+        <div class="rt-row">
+          <div>🏢 Vendor / compliance</div>
+          <div style="font-size:8px;">~10%</div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span style="color:#d1d5db;">—</span></div>
+          <div><span class="rt-escalate">✓ Manager</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-connector">↓</div>
+
+  <!-- ═══ PHASE 4: HUMAN TASK ═══ -->
+  <div class="phase-section">
+    <div class="phase-header p4-color">
+      <div class="ph-badge">Phase 4</div>
+      <div class="ph-name">Human Task — AP Clerk in SAP Task Center</div>
+      <div class="ph-desc">Agent-prepared · Full context · 90 seconds to decide · Boundary events enforce SLA</div>
+    </div>
+    <div class="phase-body">
+      <div class="flow-row">
+
+        <!-- Task Center -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;">
+          <div class="node node-human" style="width:130px;min-height:110px;">
+            <div class="n-icon">👩‍💼</div>
+            <div class="n-title">AP Clerk — SAP Task Center</div>
+            <div class="n-sub" style="max-width:118px;margin-top:4px;">Invoice · Agent analysis · Root cause · Recommendation · Confidence · Evidence · Vendor letter ready</div>
+          </div>
+          <div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:center;">
+            <div style="background:#16a34a;color:white;border-radius:4px;padding:2px 7px;font-size:8px;font-weight:700;">Unblock</div>
+            <div style="background:#dc2626;color:white;border-radius:4px;padding:2px 7px;font-size:8px;font-weight:700;">Reject</div>
+            <div style="background:#d97706;color:white;border-radius:4px;padding:2px 7px;font-size:8px;font-weight:700;">Partial</div>
+            <div style="background:#7c3aed;color:white;border-radius:4px;padding:2px 7px;font-size:8px;font-weight:700;">Escalate</div>
+          </div>
+          <span class="hm-badge">Human 1 · Due: 4 hours</span>
+          <div style="font-size:8px;color:#6b7280;text-align:center;">⏰ Reminder 2h · Escalate 4h</div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Task preview -->
+        <div class="task-preview">
+          <div style="font-size:9px;font-weight:700;color:#7c3aed;margin-bottom:8px;">Task Center — AP Clerk sees</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;">
+              <span style="font-weight:600;">Invoice</span><span style="color:#0a6ed1;font-weight:700;">INV-7823 · ACME</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;">
+              <span style="font-weight:600;">Amount</span><span>€142,000</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:3px 6px;background:#fef2f2;border-radius:4px;border:1px solid #fca5a5;">
+              <span style="font-weight:600;color:#dc2626;">Exception</span><span style="color:#dc2626;font-weight:700;">Price +18%</span>
+            </div>
+            <div style="font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;">
+              <span style="font-weight:600;">Agent:</span> Surcharge €14,200 — not in contract clause 4.2. Reject line 3.
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;padding:3px 6px;background:#fef3c7;border-radius:4px;border:1px solid #d97706;">
+              <span style="font-weight:600;color:#92400e;">Confidence</span><span style="color:#d97706;font-weight:700;">94% ✓</span>
+            </div>
+            <div style="display:flex;gap:4px;font-size:8px;padding:3px 6px;background:white;border-radius:4px;border:1px solid #e5e7eb;">
+              <span style="font-weight:600;">Evidence:</span>
+              <span style="color:#0a6ed1;text-decoration:underline;cursor:pointer;">Contract §4.2</span>
+              <span style="color:#0a6ed1;text-decoration:underline;cursor:pointer;">Invoice PDF</span>
+            </div>
+          </div>
+          <div style="font-size:8px;color:#7c3aed;margin-top:6px;font-style:italic;">Decision time: 90 seconds vs 45 minutes manually</div>
+        </div>
+
+        <div class="arr">→</div>
+
+        <!-- Decision paths -->
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+          <div style="font-size:9px;font-weight:700;color:#374151;margin-bottom:4px;">Decision outcomes:</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="background:#16a34a;color:white;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:700;min-width:70px;text-align:center;">Unblock</span>
+            <span style="font-size:8px;color:#374151;">Release full invoice → S/4HANA posts payment</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="background:#dc2626;color:white;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:700;min-width:70px;text-align:center;">Reject</span>
+            <span style="font-size:8px;color:#374151;">Reject invoice → send agent-drafted letter to vendor</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="background:#d97706;color:white;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:700;min-width:70px;text-align:center;">Partial</span>
+            <span style="font-size:8px;color:#374151;">Accept €127,800 · Reject line 3 · Request credit note</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="background:#7c3aed;color:white;border-radius:4px;padding:2px 8px;font-size:8px;font-weight:700;min-width:70px;text-align:center;">Escalate</span>
+            <span style="font-size:8px;color:#374151;">Route to AP Manager with full agent context</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-connector">↓</div>
+
+  <!-- ═══ PHASE 5: RESOLUTION ═══ -->
+  <div class="phase-section">
+    <div class="phase-header p5-color">
+      <div class="ph-badge">Phase 5</div>
+      <div class="ph-name">Resolution &amp; Escalation — Automated Execution + SLA Enforcement</div>
+      <div class="ph-desc">S/4HANA updated · Vendor notified · Boundary events · Jira ticket for IT issues · Analytics</div>
+    </div>
+    <div class="phase-body">
+
+      <!-- Resolution paths -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+
+        <!-- Resolved path -->
+        <div>
+          <div style="font-size:9px;font-weight:700;color:#16a34a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;">✓ Resolved — Automated Execution</div>
+          <div class="exec-box">
+            <div class="eb-title">All fire simultaneously on decision</div>
+            <div class="eb-row">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div class="node node-action" style="width:90px;min-height:72px;padding:6px;">
+                  <div class="n-icon" style="font-size:14px;">💼</div>
+                  <div class="n-title" style="font-size:8.5px;">S/4HANA MCP</div>
+                  <div class="n-sub">Unblock · Reject · Partial post SAP Payroll</div>
+                </div>
+                <span class="badge badge-system" style="font-size:7px;">Instant</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div class="node node-notify" style="width:90px;min-height:72px;padding:6px;">
+                  <div class="n-icon" style="font-size:14px;">📧</div>
+                  <div class="n-title" style="font-size:8.5px;">Vendor Notified</div>
+                  <div class="n-sub">Agent-drafted letter sent in vendor language</div>
+                </div>
+                <span class="badge badge-auto" style="font-size:7px;">Auto</span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div class="node node-docgen" style="width:90px;min-height:72px;padding:6px;">
+                  <div class="n-icon" style="font-size:14px;">📄</div>
+                  <div class="n-title" style="font-size:8.5px;">Audit Record</div>
+                  <div class="n-sub">Full agent reasoning Decision stored</div>
+                </div>
+                <span class="badge badge-auto" style="font-size:7px;">Complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Escalation path -->
+        <div>
+          <div style="font-size:9px;font-weight:700;color:#dc2626;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px;">⚠ Escalation Paths</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+
+            <div style="display:flex;align-items:center;gap:6px;background:#fff1f2;border:1px solid #fca5a5;border-radius:8px;padding:6px 10px;">
+              <div class="node node-scheduler" style="width:70px;min-height:52px;padding:5px;">
+                <div class="n-icon" style="font-size:13px;">⏰</div>
+                <div class="n-title" style="font-size:8px;">SLA Breach</div>
+                <div class="n-sub">4h · 8h · 24h</div>
+              </div>
+              <div style="font-size:8px;color:#374151;">Boundary event fires → escalate to AP Manager → notify CFO if &gt;€100K</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:6px;background:#fdf4ff;border:1px solid #c4b5fd;border-radius:8px;padding:6px 10px;">
+              <div class="node node-human" style="width:70px;min-height:52px;padding:5px;">
+                <div class="n-icon" style="font-size:13px;">👔</div>
+                <div class="n-title" style="font-size:8px;">AP Manager</div>
+              </div>
+              <div style="font-size:8px;color:#374151;">Strategic decision · Vendor relationship · Legal dispute · Final resolution authority</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:6px 10px;">
+              <div class="node node-action" style="width:70px;min-height:52px;padding:5px;background:#0891b2;border-color:#0e7490;">
+                <div class="n-icon" style="font-size:13px;">🎫</div>
+                <div class="n-title" style="font-size:8px;">Ticket Created</div>
+              </div>
+              <div style="font-size:8px;color:#374151;">IT issue (data quality) → Jira / ServiceNow · Vendor dispute → SAP Service Cloud</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Analytics row -->
+      <div style="background:#1a1a2e;border-radius:10px;padding:14px;margin-top:4px;">
+        <div style="font-size:10px;font-weight:700;color:white;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">📊 Analytics — AP Process Owner Dashboard</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;">
+          <div style="text-align:center;">
+            <div style="font-size:20px;font-weight:700;color:#22c55e;">47</div>
+            <div style="font-size:8px;color:#9ca3af;">Invoices processed today</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:20px;font-weight:700;color:#22c55e;">80%</div>
+            <div style="font-size:8px;color:#9ca3af;">Autonomous resolution rate</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:20px;font-weight:700;color:#fbbf24;">9</div>
+            <div style="font-size:8px;color:#9ca3af;">Human decisions needed</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:20px;font-weight:700;color:#60a5fa;">94%</div>
+            <div style="font-size:8px;color:#9ca3af;">Avg agent confidence</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:20px;font-weight:700;color:#f87171;">2</div>
+            <div style="font-size:8px;color:#9ca3af;">SLA at risk (&gt;4h)</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:20px;font-weight:700;color:#a78bfa;">€42K</div>
+            <div style="font-size:8px;color:#9ca3af;">Duplicates prevented</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="footer">
+    <div class="human-moments">
+      <h4>Three Human Moments — 80% of Exceptions Handled Autonomously</h4>
+      <div class="hm-row"><div class="hm-num">1</div> AP Clerk reviews agent-prepared exception in Task Center — 90 seconds · Unblock / Reject / Partial / Escalate</div>
+      <div class="hm-row"><div class="hm-num">2</div> Buyer creates or confirms PO for missing-PO exceptions — only where business judgment needed</div>
+      <div class="hm-row"><div class="hm-num">3</div> AP Manager handles high-value exceptions &gt;€100K · vendor disputes · legal issues · SLA breaches</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+        <div style="background:#fef3c7;border:1px solid #d97706;border-radius:6px;padding:4px 10px;font-size:9px;font-weight:700;color:#92400e;">💰 Price Mismatch</div>
+        <div style="background:#eff6ff;border:1px solid #0a6ed1;border-radius:6px;padding:4px 10px;font-size:9px;font-weight:700;color:#1e40af;">📦 GRIR Variance</div>
+        <div style="background:#f0fdf4;border:1px solid #16a34a;border-radius:6px;padding:4px 10px;font-size:9px;font-weight:700;color:#166534;">🔁 Duplicate</div>
+        <div style="background:#fdf4ff;border:1px solid #7c3aed;border-radius:6px;padding:4px 10px;font-size:9px;font-weight:700;color:#6b21a8;">🔍 Missing PO</div>
+        <div style="background:#fff7f5;border:1px solid #dc2626;border-radius:6px;padding:4px 10px;font-size:9px;font-weight:700;color:#991b1b;">🏢 Vendor Issue</div>
+      </div>
+      <div class="source-note">
+        Autonomous Operations · Human Ambition<br>
+        Joule Flow · S/4HANA Cloud · SAP Ariba · Fieldglass · Concur · 2026<br>
+        <span style="color:#dc2626;font-weight:700;">Internal — SAP and External Parties under NDA Only</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true" style="visibility: visible !important;"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
