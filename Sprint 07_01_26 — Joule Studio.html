@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<!-- saved from url=(0077)https://pages.github.tools.sap/BUILD/PM/Sprint_Plannings/sprint-07_01_26.html -->
+<html lang="en" class=" ulsqruio idc0_350"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprint 07_01_26 — Joule Studio</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+
+    header {
+      max-width: 960px;
+      margin: 0 auto 48px;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f0f6fc;
+    }
+
+    header .meta {
+      margin-top: 8px;
+      font-size: 0.875rem;
+      color: #8b949e;
+    }
+
+    header .meta span {
+      margin-right: 16px;
+    }
+
+    .sprint-badge {
+      display: inline-block;
+      background: #1f6feb;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-left: 12px;
+      vertical-align: middle;
+    }
+
+    .grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+      gap: 24px;
+    }
+
+    .cluster {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .cluster-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .cluster-icon {
+      font-size: 1.25rem;
+    }
+
+    .cluster-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f0f6fc;
+    }
+
+    .cluster-count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: #8b949e;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 1px 8px;
+    }
+
+    .story-list {
+      list-style: none;
+      padding: 8px 0;
+    }
+
+    .story-list li {
+      border-bottom: 1px solid #21262d;
+    }
+
+    .story-list li:last-child {
+      border-bottom: none;
+    }
+
+    .story-link {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 20px;
+      text-decoration: none;
+      color: #e6edf3;
+      transition: background 0.12s;
+    }
+
+    .story-link:hover {
+      background: #1c2128;
+    }
+
+    .story-key {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #58a6ff;
+      white-space: nowrap;
+      padding-top: 2px;
+      min-width: 110px;
+    }
+
+    .story-summary {
+      font-size: 0.875rem;
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .status-open     { background: #3fb950; }
+    .status-progress { background: #f0883e; }
+    .status-done     { background: #8b949e; }
+
+    .story-link.done .story-summary {
+      text-decoration: line-through;
+      color: #8b949e;
+    }
+
+    .legend {
+      max-width: 960px;
+      margin: 32px auto 0;
+      display: flex;
+      gap: 20px;
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .separator {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 8px 0 4px;
+    }
+
+    .separator-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #8b949e;
+      white-space: nowrap;
+    }
+
+    .separator-line {
+      flex: 1;
+      height: 1px;
+      background: #30363d;
+    }
+
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/Injected/IRPA_FrameworkHelper.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/Injected/Injected.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/CxCapture.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/CxSnapshot.js" async=""></script><script src="chrome-extension://dlnhkapcpdnenaomhgpmkplleeahdjje/CxCaptureUI5.js" async=""></script></head>
+<body data-new-gr-c-s-check-loaded="14.1308.0" data-gr-ext-installed="">
+
+<header>
+  <h1>Joule Studio <span class="sprint-badge">Sprint 07_01_26</span></h1>
+  <div class="meta">
+    <span>Jul 6 – Jul 13, 2026</span>
+    <span>30 user stories</span>
+    <span>Project: SAPBUILD</span>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- ADMIN SCENARIO SEPARATOR -->
+  <div class="separator">
+    <span class="separator-label">Admin scenario: trust, governance, ALM</span>
+    <div class="separator-line"></div>
+  </div>
+
+  <!-- OBSERVABILITY -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">📡</span>
+      <span class="cluster-title">Observability</span>
+      <span class="cluster-count">4 stories</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3962" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3962</span>
+          <span class="story-summary">[Observability] Role aware observability API for studio UI</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3960" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3960</span>
+          <span class="story-summary">[Observability] Identify Customer / tenant for telemetry segregation</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3912" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3912</span>
+          <span class="story-summary">[Observability] Merging of trace processing and trace filtering service</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3906" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3906</span>
+          <span class="story-summary">[Observability] Monitoring within individual CAP Applications view</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SOLUTION LIFECYCLE -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">📦</span>
+      <span class="cluster-title">Solution Lifecycle (Versioning, Sharing &amp; Import)</span>
+      <span class="cluster-count">5 stories</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3969" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3969</span>
+          <span class="story-summary">[Solution Versioning] Create a snapshot of the deployed Solution</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3850" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-3850</span>
+          <span class="story-summary">Solution Deployment Cancel Job</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3210" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3210</span>
+          <span class="story-summary">[Solution Versioning] Create a "released" version of the solution</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-2873" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-2873</span>
+          <span class="story-summary">[Solution] Conditional overwrite an existing Solution by import</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-2406" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-2406</span>
+          <span class="story-summary">Document the github flow to deploy the solution</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- STUDIO GOVERNANCE -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">⚖️</span>
+      <span class="cluster-title">Studio Governance</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-2111" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-2111</span>
+          <span class="story-summary">Joule Studio Authorization Model</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- STUDIO EXPERIENCE SEPARATOR -->
+  <div class="separator">
+    <span class="separator-label">Studio Experience</span>
+    <div class="separator-line"></div>
+  </div>
+
+  <!-- COLLABORATION EXPERIENCE -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🤝</span>
+      <span class="cluster-title">Collaboration experience</span>
+      <span class="cluster-count">2 stories</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3213" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3213</span>
+          <span class="story-summary">[Solution] Handover ownership</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3190" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3190</span>
+          <span class="story-summary">Share as View-Only (Read-Only)</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- JOULE STUDIO EXPERIENCE -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">✨</span>
+      <span class="cluster-title">Guidance</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3905" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3905</span>
+          <span class="story-summary">Improve the create solution experience</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- STUDIO OPERATIONS AND TELEMETRY -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">📊</span>
+      <span class="cluster-title">Studio Operations and Telemetry</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3910" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3910</span>
+          <span class="story-summary">[Internal CCO Dashboard] Joule Studio adoption and usage across by Customer</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- EAC PROVISIONING & AUTHORIZATION -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🔐</span>
+      <span class="cluster-title">EAC Provisioning &amp; Authorization</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3532" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-3532</span>
+          <span class="story-summary">[EAC] Provisioning of Joule Studio in SAP Managed setup (with Joule Work via SAP4Me)</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SCENARIOS SEPARATOR -->
+  <div class="separator">
+    <span class="separator-label">Scenarios</span>
+    <div class="separator-line"></div>
+  </div>
+
+  <!-- TASK CENTER -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">✅</span>
+      <span class="cluster-title">Task Center</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-2685" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-2685</span>
+          <span class="story-summary">Task Management MCP Server for Agentic Non-Blocking Tasks</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- AGENT DEVELOPMENT -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🛠️</span>
+      <span class="cluster-title">Agent Development</span>
+      <span class="cluster-count">5 stories</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3951" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-3951</span>
+          <span class="story-summary">Token consumption display at Agent Preview</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3950" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3950</span>
+          <span class="story-summary">Agent Skills configuration in Agent Design view</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3949" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3949</span>
+          <span class="story-summary">[EAC Blocker] Use upgraded cloud SDK version [Agent]</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3946" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3946</span>
+          <span class="story-summary">[EAC Blocker] Test that the custom WHL files work in the web agent case [Agent]</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3923" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3923</span>
+          <span class="story-summary">Deployment of customer-created MCP Servers</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- AGENT EXTENSION -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🔌</span>
+      <span class="cluster-title">Agent Extension</span>
+      <span class="cluster-count">2 stories</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3954" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-3954</span>
+          <span class="story-summary">Visibility of Agents, MCPs, and Hooks Available for Extension</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3953" target="_blank" rel="noopener">
+          <span class="status-dot status-progress"></span>
+          <span class="story-key">SAPBUILD-3953</span>
+          <span class="story-summary">Auto-generate Intent, PRD, and Spec for Agent Extension Solutions</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- MIGRATION -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🔄</span>
+      <span class="cluster-title">Migration (1.0 → 2.0)</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3902" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3902</span>
+          <span class="story-summary">Migrate Agent Tools from Joule Studio 1.0 to 2.0</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SAP DATA CONSUMPTION -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🗄️</span>
+      <span class="cluster-title">SAP data consumption</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3908" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3908</span>
+          <span class="story-summary">Explore SAP Service from Multiple S/4HANA Cloud systems</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- IBD -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🧠</span>
+      <span class="cluster-title">IBD</span>
+      <span class="cluster-count">3 stories</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3983" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3983</span>
+          <span class="story-summary">IBD Stability Realization</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3541" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3541</span>
+          <span class="story-summary">[EAC] Test Evaluation Report</span>
+        </a>
+      </li>
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/SAPBUILD-3900" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">SAPBUILD-3900</span>
+          <span class="story-summary">[EAC] Principal propagation for LeanIX</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- BDC -->
+  <div class="cluster">
+    <div class="cluster-header">
+      <span class="cluster-icon">🔗</span>
+      <span class="cluster-title">BDC</span>
+      <span class="cluster-count">1 story</span>
+    </div>
+    <ul class="story-list">
+      <li>
+        <a class="story-link" href="https://jira.tools.sap/browse/DW13-6818" target="_blank" rel="noopener">
+          <span class="status-dot status-open"></span>
+          <span class="story-key">DW13-6818</span>
+          <span class="story-summary">All in on AI — Integrate BUILD Vibe Coding with DP Agent</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot status-open"></div> Open</div>
+  <div class="legend-item"><div class="legend-dot status-progress"></div> In Progress</div>
+  <div class="legend-item"><div class="legend-dot status-done"></div> Done</div>
+</div>
+
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true" style="visibility: visible !important;"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
