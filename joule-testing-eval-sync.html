@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Testing & Evaluation Squad Sync — 10 юли 2026</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: #f5f6f8; color: #1d2733; display: flex; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width:220px; min-height:100vh; background:#fff; border-right:1px solid #e8eaed; display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+    .sidebar-logo { padding:20px 18px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e8eaed; }
+    .sidebar-logo-icon { width:32px; height:32px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sidebar-logo-text { font-size:0.82rem; font-weight:700; color:#1d2733; line-height:1.2; }
+    .sidebar-logo-sub { font-size:0.65rem; color:#9ca3af; font-weight:400; }
+    .sidebar-section-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#b0b5c0; padding:16px 18px 6px; }
+    .sidebar-nav { flex:1; padding:8px 0; overflow-y:auto; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:8px 18px; text-decoration:none; color:#4a5568; font-size:0.82rem; font-weight:500; transition:background 0.12s, color 0.12s; position:relative; }
+    .nav-item:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:#6e4bdb; border-radius:0 2px 2px 0; }
+    .nav-item.sub { padding-left:32px; font-size:0.78rem; color:#6b7280; }
+    .nav-item.sub:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.sub.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
+    .nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .nav-divider { height:1px; background:#f0f1f3; margin:6px 18px; }
+    .sidebar-footer { padding:14px 18px; border-top:1px solid #e8eaed; font-size:0.65rem; color:#b0b5c0; line-height:1.5; }
+
+    /* MAIN */
+    .main-wrap { margin-left:220px; flex:1; min-width:0; }
+    .page-header { background:#fff; border-bottom:1px solid #e8eaed; padding:36px 40px 28px; }
+    .page-header-inner { max-width:1000px; }
+    .page-title { font-size:2rem; font-weight:700; color:#1d2733; line-height:1.2; margin-bottom:8px; }
+    .page-meta { font-size:0.82rem; color:#8b8fa8; margin-bottom:16px; }
+    .page-desc { font-size:0.95rem; color:#4a5568; line-height:1.7; max-width:740px; }
+    .tag-bar { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+    .tag { font-size:0.72rem; font-weight:600; padding:3px 10px; border-radius:4px; background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; }
+    .tag.orange { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
+    .tag.green  { background:#f0fdf4; color:#14532d; border-color:#bbf7d0; }
+    .tag.gray   { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+    .tag.yellow { background:#fffbeb; color:#92400e; border-color:#fcd34d; }
+
+    .content { max-width:1000px; margin:36px auto 80px; padding:0 40px; }
+
+    .section { margin-bottom:40px; }
+    .section-title { font-size:1.15rem; font-weight:700; color:#1d2733; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid #e8eaed; }
+
+    /* ATTENDEES */
+    .attendees { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+    .attendee { background:white; border:1px solid #e8eaed; border-radius:8px; padding:10px 14px; font-size:0.82rem; }
+    .attendee-name { font-weight:700; color:#1d2733; }
+    .attendee-role { font-size:0.72rem; color:#9ca3af; margin-top:2px; }
+
+    /* KEY FINDING BOX */
+    .finding-box { background:white; border-radius:10px; border:1px solid #e8eaed; padding:24px; margin-bottom:20px; border-left:4px solid #6e4bdb; }
+    .finding-box h3 { font-size:0.95rem; font-weight:700; color:#5b21b6; margin-bottom:12px; }
+    .finding-box p { font-size:0.88rem; color:#4a5568; line-height:1.75; margin-bottom:8px; }
+    .finding-box p:last-child { margin-bottom:0; }
+
+    /* HYPOTHESIS TABLE */
+    .hyp-table { width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; border:1px solid #e8eaed; margin-bottom:20px; font-size:0.87rem; }
+    .hyp-table thead { background:#f5f3ff; }
+    .hyp-table th { padding:12px 16px; text-align:left; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#5b21b6; border-bottom:1px solid #e8eaed; }
+    .hyp-table td { padding:12px 16px; border-bottom:1px solid #f0f1f3; color:#374151; line-height:1.6; vertical-align:top; }
+    .hyp-table tr:last-child td { border-bottom:none; }
+    .hyp-table td:first-child { font-weight:600; color:#1d2733; white-space:nowrap; }
+
+    /* 2x2 MATRIX */
+    .matrix-wrap { background:white; border:1px solid #e8eaed; border-radius:10px; overflow:hidden; margin-bottom:20px; }
+    .matrix-title { padding:16px 20px 12px; font-size:0.88rem; font-weight:700; color:#1d2733; border-bottom:1px solid #e8eaed; }
+    .matrix-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+    .matrix-cell { padding:20px; border-right:1px solid #e8eaed; border-bottom:1px solid #e8eaed; }
+    .matrix-cell:nth-child(2) { border-right:none; }
+    .matrix-cell:nth-child(3) { border-right:1px solid #e8eaed; border-bottom:none; }
+    .matrix-cell:nth-child(4) { border-right:none; border-bottom:none; }
+    .matrix-cell-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+    .matrix-cell-label.tech { color:#1d4ed8; }
+    .matrix-cell-label.biz  { color:#16a34a; }
+    .matrix-cell-desc { font-size:0.83rem; color:#4a5568; line-height:1.6; }
+    .matrix-cell.highlighted { background:#f5f3ff; }
+    .matrix-cell.highlighted .matrix-cell-desc { color:#3730a3; }
+    .matrix-badge { display:inline-block; font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:10px; margin-top:6px; }
+    .matrix-badge.current { background:#dbeafe; color:#1e40af; }
+    .matrix-badge.future  { background:#f3f4f6; color:#6b7280; }
+    .matrix-header-row { display:grid; grid-template-columns:auto 1fr 1fr; background:#f9fafb; border-bottom:1px solid #e8eaed; }
+    .matrix-header-cell { padding:10px 16px; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#9ca3af; text-align:center; border-left:1px solid #e8eaed; }
+    .matrix-header-cell:first-child { border-left:none; }
+    .matrix-row { display:grid; grid-template-columns:auto 1fr 1fr; border-bottom:1px solid #f0f1f3; }
+    .matrix-row:last-child { border-bottom:none; }
+    .matrix-row-label { padding:14px 16px; font-size:0.78rem; font-weight:700; color:#374151; writing-mode:horizontal-tb; display:flex; align-items:center; min-width:110px; background:#fafafa; border-right:1px solid #e8eaed; }
+    .matrix-row-cell { padding:14px 16px; font-size:0.83rem; color:#4a5568; line-height:1.6; border-left:1px solid #f0f1f3; }
+    .matrix-row-cell.active { background:#f5f3ff; color:#3730a3; font-weight:500; }
+
+    /* OPEN QUESTIONS */
+    .questions-list { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+    .question-item { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:14px 18px; font-size:0.87rem; color:#374151; line-height:1.6; display:flex; gap:10px; }
+    .q-mark { font-weight:900; color:#f59e0b; flex-shrink:0; font-size:1rem; }
+
+    /* DECISIONS */
+    .decisions-list { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+    .decision-item { background:white; border:1px solid #e8eaed; border-radius:8px; padding:14px 18px; display:flex; gap:12px; align-items:flex-start; }
+    .decision-check { color:#10b981; font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+    .decision-text { font-size:0.87rem; color:#374151; line-height:1.6; }
+
+    /* ACTION ITEMS TABLE */
+    .actions-table { width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; border:1px solid #e8eaed; margin-bottom:20px; font-size:0.87rem; }
+    .actions-table thead { background:#f0fdf4; }
+    .actions-table th { padding:12px 16px; text-align:left; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#15803d; border-bottom:1px solid #e8eaed; }
+    .actions-table td { padding:12px 16px; border-bottom:1px solid #f0f1f3; color:#374151; line-height:1.6; vertical-align:top; }
+    .actions-table tr:last-child td { border-bottom:none; }
+    .owner-chip { display:inline-block; font-size:0.72rem; font-weight:600; padding:2px 10px; border-radius:10px; background:#dbeafe; color:#1e40af; white-space:nowrap; }
+    .owner-chip.all { background:#f3e8ff; color:#6b21a8; }
+
+    /* CONTACTS */
+    .contacts-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .contact-card { background:white; border:1px solid #e8eaed; border-radius:8px; padding:14px 16px; }
+    .contact-name { font-size:0.88rem; font-weight:700; color:#1d2733; margin-bottom:2px; }
+    .contact-role { font-size:0.78rem; color:#6b7280; }
+    .contact-role span { display:inline-block; margin-top:4px; font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:10px; background:#f3f4f6; color:#374151; }
+
+    /* CONCLUSION */
+    .conclusion-box { background:white; border-radius:10px; border:1px solid #e8eaed; padding:24px; border-left:4px solid #10b981; }
+    .conclusion-box p { font-size:0.88rem; color:#4a5568; line-height:1.75; margin-bottom:8px; }
+    .conclusion-box p:last-child { margin-bottom:0; }
+
+    footer { text-align:center; padding:24px; font-size:0.78rem; color:#b0b5c0; border-top:1px solid #e8eaed; background:#fff; }
+  
+    /* РЕФЕРЕНЦИИ */
+    .ref-section { max-width:1000px; margin:0 auto 48px; padding:0 40px; }
+    .ref-section-title { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#b0b5c0; margin-bottom:12px; padding-bottom:6px; border-bottom:1px solid #e8eaed; }
+    .ref-links { display:flex; flex-direction:column; gap:8px; }
+    .ref-link { display:inline-flex; align-items:center; gap:8px; font-size:0.83rem; font-weight:500; color:#5b21b6; text-decoration:none; background:#f5f3ff; border:1px solid #ddd6fe; padding:8px 14px; border-radius:7px; width:fit-content; transition:background 0.12s, border-color 0.12s; }
+    .ref-link:hover { background:#ede9fe; border-color:#c4b5fd; }
+    .ref-link-icon { font-size:0.75rem; opacity:0.7; }
+    .ref-link-label { font-size:0.68rem; color:#9ca3af; font-weight:400; margin-left:2px; }
+  </style>
+  <link rel="icon" type="image/png" href="gem.png">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon"><img src="gem.png" style="width:32px;height:32px;object-fit:contain;"></div>
+    <div>
+      <div class="sidebar-logo-text">Joule UX</div>
+      <div class="sidebar-logo-sub">SAP Build AI</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Overview</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">⊞</span> Dashboard</a>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section-label">Теми</div>
+    <a href="joule-evaluations.html" class="nav-item"><span class="nav-icon">▸</span> Agent Evaluations</a>
+    <a href="joule-evaluations-flow.html" class="nav-item sub"><span class="nav-icon">▸</span> Evaluations Flow</a>
+    <a href="joule-testing-eval-sync.html" class="nav-item sub active"><span class="nav-icon">▸</span> Testing & Eval Sync</a>
+    <a href="joule-ap-invoice.html" class="nav-item"><span class="nav-icon">▸</span> Joule Flow</a>
+    <a href="joule-flow-ap-invoice.html" class="nav-item sub"><span class="nav-icon">▸</span> AP Invoice</a>
+    <a href="joule-flow-discovery.html" class="nav-item sub"><span class="nav-icon">▸</span> Discovery Session</a>
+    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="nav-item"><span class="nav-icon">▸</span> SWOT Analysis</a>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section-label">Reference</div>
+    <a href="joule-studio-glossary.html" class="nav-item"><span class="nav-icon">▸</span> Речник</a>
+  </nav>
+  <div class="sidebar-footer">SAP Build AI · 2026<br/>Joule Studio UX Team</div>
+</aside>
+
+<div class="main-wrap">
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="page-title">Testing &amp; Evaluation Squad Sync</div>
+      <div class="page-meta">10 юли 2026 · 34 мин · Joule Studio</div>
+      <div class="page-desc">Съгласуване на връзката между Testing и Evaluation в Joule Studio — идентифициране на концептуалното припокриване и основата за единен UX модел.</div>
+      <div class="tag-bar">
+        <span class="tag">Agent Evaluations</span>
+        <span class="tag">Testing</span>
+        <span class="tag orange">Squad Sync</span>
+        <span class="tag yellow">PM Alignment нужен</span>
+        <span class="tag green">Munich Workshop</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- УЧАСТНИЦИ -->
+    <div class="section">
+      <div class="section-title">Участници</div>
+      <div class="attendees">
+        <div class="attendee"><div class="attendee-name">Holger Deist</div><div class="attendee-role">Testing UX Squad Lead</div></div>
+        <div class="attendee"><div class="attendee-name">Todor Shtrakov</div><div class="attendee-role">Evaluation UX Squad Lead</div></div>
+        <div class="attendee"><div class="attendee-name">Lionel Michel</div><div class="attendee-role">Testing UX Squad</div></div>
+        <div class="attendee"><div class="attendee-name">Diana Balkanska</div><div class="attendee-role">UX Manager, Sofia</div></div>
+      </div>
+    </div>
+
+    <!-- ЦЕЛ -->
+    <div class="section">
+      <div class="section-title">Цел на срещата</div>
+      <div class="finding-box">
+        <p>Установяване на концептуалната връзка между Testing и Evaluation в Joule Studio и идентифициране на потенциални припокривания в scope, концепции и потребителски опит.</p>
+        <p>Целта е изграждане на общо разбиране и определяне как двата squad-а могат да работят заедно за <strong>единно и последователно потребителско изживяване</strong>.</p>
+      </div>
+    </div>
+
+    <!-- КЛЮЧОВО ПРИПОКРИВАНЕ -->
+    <div class="section">
+      <div class="section-title">1. Значително концептуално припокриване</div>
+      <div class="finding-box">
+        <h3>Първоначални наблюдения от Holger и Lionel</h3>
+        <p><strong>Evaluation</strong> — фокус върху оценка на индивидуални компоненти на решение (напр. агент).</p>
+        <p><strong>Testing</strong> — фокус върху валидиране на по-големи сборки или пълни end-to-end сценарии.</p>
+        <p>И двете разчитат на едни и същи елементи: тест/evaluation сценарии, метрики за успех, валидиране на очаквано поведение, многократно използваеми datasets и стандарти.</p>
+      </div>
+    </div>
+
+    <!-- РАБОТНА ХИПОТЕЗА -->
+    <div class="section">
+      <div class="section-title">2. Работна хипотеза — нива на тестване</div>
+      <table class="hyp-table">
+        <thead>
+          <tr>
+            <th>Ниво</th>
+            <th>Описание</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Unit Testing / Evaluation</td>
+            <td>Валидиране на индивидуален компонент — агент, workflow, приложение.</td>
+          </tr>
+          <tr>
+            <td>Integration Testing</td>
+            <td>Валидиране на взаимодействията между множество компоненти.</td>
+          </tr>
+          <tr>
+            <td>End-to-End Testing</td>
+            <td>Валидиране на цялото решение и бизнес процес.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="finding-box" style="border-left-color:#f59e0b;">
+        <h3 style="color:#92400e;">Предложение на Holger</h3>
+        <p><em>"Дизайн-тайм evaluation е по същество подмножество на end-to-end тестването."</em></p>
+        <p>Todor като цяло се съгласява с тази гледна точка като отправна точка за по-нататъшна дискусия.</p>
+      </div>
+    </div>
+
+    <!-- ТЕКУЩО СЪСТОЯНИЕ -->
+    <div class="section">
+      <div class="section-title">3. Текущо състояние на Evaluations</div>
+      <div class="finding-box">
+        <h3>Контекст от Todor</h3>
+        <p>Съществуващите evaluation дизайни произхождат от Sapphire работата на Andre Diogo — <strong>никога не са напълно имплементирани</strong>. Очаква се значителен редизайн.</p>
+        <p>Backend интеграцията вече съществува чрез <strong>AEvals service в AI Core</strong>. Текущите evaluations покриват само ограничена част от цялостния evaluation landscape.</p>
+      </div>
+
+      <div class="matrix-wrap">
+        <div class="matrix-title">Четири категории Evaluation</div>
+        <div class="matrix-header-row">
+          <div class="matrix-header-cell"></div>
+          <div class="matrix-header-cell">Преди деплоймент</div>
+          <div class="matrix-header-cell">След деплоймент</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-row-label">Техническа</div>
+          <div class="matrix-row-cell active">
+            Technical Evaluation
+            <br><span style="font-size:0.72rem;display:inline-block;margin-top:4px;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:10px;font-weight:600;">Текущ фокус</span>
+          </div>
+          <div class="matrix-row-cell">Technical Monitoring</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-row-label">Бизнес</div>
+          <div class="matrix-row-cell">Business Evaluation</div>
+          <div class="matrix-row-cell">Business Monitoring</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ОТВОРЕНИ ВЪПРОСИ -->
+    <div class="section">
+      <div class="section-title">4. Стратегически отворени въпроси</div>
+      <div class="questions-list">
+        <div class="question-item"><div class="q-mark">?</div><div>Evaluation <strong>подмножество ли е</strong> на по-широкия Testing домейн?</div></div>
+        <div class="question-item"><div class="q-mark">?</div><div>Къде спира Testing — при деплоймент или продължава в production мониторинга?</div></div>
+        <div class="question-item"><div class="q-mark">?</div><div>Testing ограничено ли е само до <strong>техническа валидация</strong>?</div></div>
+        <div class="question-item"><div class="q-mark">?</div><div>Как бизнес-impact evaluations се вписват в общата рамка?</div></div>
+      </div>
+      <div style="font-size:0.82rem;color:#9ca3af;padding:8px 0;">Тези въпроси изискват съгласуване с Product Management и Architecture stakeholders.</div>
+    </div>
+
+    <!-- UX КОНСИСТЕНТНОСТ -->
+    <div class="section">
+      <div class="section-title">5. UX консистентност — ключова цел</div>
+      <div class="finding-box" style="border-left-color:#10b981;">
+        <h3 style="color:#065f46;">Консенсус на екипа</h3>
+        <p>Evaluation и Testing може да имат различни цели и метрики, но <strong>споделят много workflows и потребителски действия</strong>.</p>
+        <p>Сходни концепции трябва да се държат последователно в целия продукт. Потребителят трябва да среща познати patterns независимо дали оценява агент или тества цяло решение.</p>
+        <p>Целта: <strong>единен и модулен UX модел</strong> с многократно използваеми компоненти.</p>
+      </div>
+    </div>
+
+    <!-- SCOPE ИЗВЪН АГЕНТИ -->
+    <div class="section">
+      <div class="section-title">6. Scope извън агенти</div>
+      <div class="finding-box">
+        <p>Решенията могат да се състоят от: агенти, workflows, applications и множество оркестрирани компоненти.</p>
+        <p>Evaluation и testing концепциите <strong>не трябва да са ограничени до агенти</strong>. Общите patterns трябва да поддържат всички solution artifacts и да предвиждат cross-component и end-to-end сценарии.</p>
+      </div>
+    </div>
+
+    <!-- CROSS-TEAM SYNC -->
+    <div class="section">
+      <div class="section-title">7. Съществуваща cross-team Evaluation инициатива</div>
+      <div class="finding-box">
+        <h3>Recurring Evaluation Sync — участници</h3>
+        <p>Todor участва в редовен cross-team sync с: AI Core, Joule Studio, LinIX, COM, Architects, Designers, Product stakeholders.</p>
+        <p>Групата работи върху: съществуващи evaluation capabilities, граници на ownership и cross-product консистентност.</p>
+      </div>
+      <div class="finding-box" style="border-left-color:#3b82f6;">
+        <h3 style="color:#1d4ed8;">Споделен Mural борд от Todor</h3>
+        <p>Todor сподели evaluation Mural борд с: mapping на текущата evaluation екосистема, съществуващи evaluation touchpoints в SAP, предложен Joule Studio evaluation flow и планирани workshop артефакти.</p>
+        <p>Екипът се съгласи, че това е ценна отправна точка за идентифициране на общи workflows между evaluation и testing.</p>
+      </div>
+    </div>
+
+    <!-- РЕШЕНИЯ -->
+    <div class="section">
+      <div class="section-title">Решения</div>
+      <div class="decisions-list">
+        <div class="decision-item"><div class="decision-check">✅</div><div class="decision-text">Evaluation и Testing имат значително концептуално припокриване и изискват съгласуване.</div></div>
+        <div class="decision-item"><div class="decision-check">✅</div><div class="decision-text">Единен UX трябва да се преследва и в двата домейна.</div></div>
+        <div class="decision-item"><div class="decision-check">✅</div><div class="decision-text">Съществуващите evaluation flows и testing flows трябва да се преглеждат заедно.</div></div>
+        <div class="decision-item"><div class="decision-check">✅</div><div class="decision-text">Product Management stakeholders трябва да бъдат включени преди вземане на структурни решения.</div></div>
+      </div>
+    </div>
+
+    <!-- ACTION ITEMS -->
+    <div class="section">
+      <div class="section-title">Action Items</div>
+      <table class="actions-table">
+        <thead>
+          <tr>
+            <th>Задача</th>
+            <th>Отговорник</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Сподели и обсъди конвергенцията Testing/Evaluation с PMs Jakob Hornberger и Mia Ye.</td>
+            <td><span class="owner-chip">Todor</span></td>
+          </tr>
+          <tr>
+            <td>Покани PM stakeholders на joint alignment сесия.</td>
+            <td><span class="owner-chip">Todor</span></td>
+          </tr>
+          <tr>
+            <td>Прегледай споделения Evaluation Mural и идентифицирай припокриването с Testing flows.</td>
+            <td><span class="owner-chip">Holger</span> <span class="owner-chip">Lionel</span></td>
+          </tr>
+          <tr>
+            <td>Анализирай общи use cases, workflows и многократно използваеми UX patterns.</td>
+            <td><span class="owner-chip">Holger</span> <span class="owner-chip">Lionel</span> <span class="owner-chip">Todor</span></td>
+          </tr>
+          <tr>
+            <td>Поддържай текуща координация между Testing и Evaluation екипи.</td>
+            <td><span class="owner-chip all">Всички</span></td>
+          </tr>
+          <tr>
+            <td>Подготви alignment дискусия преди Munich workshop.</td>
+            <td><span class="owner-chip all">Всички</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- КЛЮЧОВИ КОНТАКТИ -->
+    <div class="section">
+      <div class="section-title">Ключови контакти</div>
+      <div class="contacts-grid">
+        <div class="contact-card"><div class="contact-name">Todor Shtrakov</div><div class="contact-role"><span>Evaluation UX Squad Lead</span></div></div>
+        <div class="contact-card"><div class="contact-name">Jacob Hornberger</div><div class="contact-role"><span>PM — Joule Studio Evaluations</span></div></div>
+        <div class="contact-card"><div class="contact-name">Mihir Jha</div><div class="contact-role"><span>Development Lead</span></div></div>
+        <div class="contact-card"><div class="contact-name">Holger Deist</div><div class="contact-role"><span>Testing UX Squad Lead</span></div></div>
+        <div class="contact-card"><div class="contact-name">Lionel Michel</div><div class="contact-role"><span>Testing UX Squad</span></div></div>
+        <div class="contact-card"><div class="contact-name">Diana Balkanska</div><div class="contact-role"><span>UX Manager, Sofia</span></div></div>
+      </div>
+    </div>
+
+    <!-- ЗАКЛЮЧЕНИЕ -->
+    <div class="section">
+      <div class="section-title">Заключение</div>
+      <div class="conclusion-box">
+        <p>Срещата установи силно начално съгласуване между Testing и Evaluation workstreams. Групата се съгласи, че дизайн-тайм evaluations, integration testing и end-to-end testing образуват <strong>свързан континуум</strong> и трябва да се подходи с единен UX.</p>
+        <p>Следващата стъпка е включване на Product Management и съвместно дефиниране на граници на ownership, workflows и UX patterns преди имплементацията да напредне.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="ref-section">
+    <div class="ref-section-title">Референции</div>
+    <div class="ref-links">
+      <a href="https://app.mural.co/t/sapartificialintelligence5121/m/sapartificialintelligence5121/1780937291088/b0e2030a7b43b9324776b7903d0839c8a2560915" target="_blank" class="ref-link">
+        <span class="ref-link-icon">▸</span> Evaluation Mural борд — Todor Shtrakov <span class="ref-link-label">Mural</span>
+      </a>
+    </div>
+  </div>
+
+    <footer>SAP Build AI · Joule Studio UX Team · 2026</footer>
+</div>
+
+</body>
+</html>
