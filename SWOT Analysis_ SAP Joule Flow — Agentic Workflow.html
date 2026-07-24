@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SWOT Analysis: SAP Joule Flow — Agentic Workflow</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    .sidebar, .sidebar * { font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important; line-height: normal; }
     :root {
       --strength: #1a7a4a;
       --strength-light: #e8f5ee;
@@ -46,6 +48,9 @@
     .nav-item:hover { background:#f5f3ff; color:#5b21b6; }
     .nav-item.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
     .nav-item.active::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:#6e4bdb; border-radius:0 2px 2px 0; }
+    .nav-item.sub { padding-left:32px; font-size:0.78rem; color:#6b7280; }
+    .nav-item.sub:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.sub.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
     .nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
     .nav-divider { height:1px; background:#f0f1f3; margin:6px 18px; }
     .sidebar-footer { padding:14px 18px; border-top:1px solid #e8eaed; font-size:0.65rem; color:#b0b5c0; line-height:1.5; }
@@ -497,22 +502,29 @@
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-icon"><img src="gem.png" style="width:32px;height:32px;object-fit:contain;"></div>
+    <div>
       <div class="sidebar-logo-text">Joule UX</div>
+      
+    </div>
   </div>
   <nav class="sidebar-nav">
     <div class="sidebar-section-label">Overview</div>
     <a href="index.html" class="nav-item"><span class="nav-icon">⊞</span> Dashboard</a>
     <div class="nav-divider"></div>
     <div class="sidebar-section-label">Теми</div>
-    <a href="joule-evaluations.html" class="nav-item"><span class="nav-icon">⚗️</span> Agent Evaluations</a>
-    <a href="joule-evaluations-flow.html" class="nav-item"><span class="nav-icon">🗺️</span> Evaluations Flow</a>
-    <a href="joule-ap-invoice.html" class="nav-item"><span class="nav-icon">📄</span> Joule Flow</a>
-    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="nav-item active"><span class="nav-icon">📊</span> SWOT Analysis</a>
+    <a href="joule-evaluations.html" class="nav-item"><span class="nav-icon">▸</span> Agent Evaluations</a>
+    <a href="joule-evaluations-flow.html" class="nav-item sub"><span class="nav-icon">▸</span> Evaluations Flow</a>
+    <a href="joule-testing-eval-sync.html" class="nav-item sub"><span class="nav-icon">▸</span> Testing &amp; Eval Sync</a>
+    <!-- JOULE-FLOW-HIDDEN <a href="joule-ap-invoice.html" class="nav-item"><span class="nav-icon">▸</span> Joule Flow</a> -->
+    <!-- JOULE-FLOW-HIDDEN <a href="joule-flow-ap-invoice.html" class="nav-item sub"><span class="nav-icon">▸</span> AP Invoice</a> -->
+    <!-- JOULE-FLOW-HIDDEN <a href="joule-flow-discovery.html" class="nav-item sub"><span class="nav-icon">▸</span> Discovery Session</a> -->
+    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="nav-item active"><span class="nav-icon">▸</span> SWOT Analysis</a> -->
     <div class="nav-divider"></div>
     <div class="sidebar-section-label">Reference</div>
-    <a href="joule-studio-glossary.html" class="nav-item"><span class="nav-icon">📖</span> Речник</a>
+    <a href="joule-studio-glossary.html" class="nav-item"><span class="nav-icon">▸</span> Речник</a>
+    <a href="https://pages.github.tools.sap/I765278/joule-studio-h2-vision/" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Vision Prototype</a>
   </nav>
-  <div class="sidebar-footer">SAP Build AI · 2026<br/>Joule Studio UX Team</div>
+  <div class="sidebar-footer">2026<br/>Joule Studio UX Team</div>
 </aside>
 
 <div class="main-wrap">

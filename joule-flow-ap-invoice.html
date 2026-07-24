@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Joule Flow — AP Invoice Exception</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: #f5f6f8; color: #1d2733; display: flex; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width:220px; min-height:100vh; background:#fff; border-right:1px solid #e8eaed; display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+    .sidebar-logo { padding:20px 18px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e8eaed; }
+    .sidebar-logo-icon { width:32px; height:32px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sidebar-logo-text { font-size:0.82rem; font-weight:700; color:#1d2733; line-height:1.2; }
+    .sidebar-logo-sub { font-size:0.65rem; color:#9ca3af; font-weight:400; }
+    .sidebar-section-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#b0b5c0; padding:16px 18px 6px; }
+    .sidebar-nav { flex:1; padding:8px 0; overflow-y:auto; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:8px 18px; text-decoration:none; color:#4a5568; font-size:0.82rem; font-weight:500; transition:background 0.12s, color 0.12s; position:relative; }
+    .nav-item:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:#6e4bdb; border-radius:0 2px 2px 0; }
+    .nav-item.sub { padding-left:32px; font-size:0.78rem; color:#6b7280; }
+    .nav-item.sub:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.sub.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
+    .nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .nav-divider { height:1px; background:#f0f1f3; margin:6px 18px; }
+    .sidebar-footer { padding:14px 18px; border-top:1px solid #e8eaed; font-size:0.65rem; color:#b0b5c0; line-height:1.5; }
+
+    /* MAIN */
+    .main-wrap { margin-left:220px; flex:1; min-width:0; }
+    .page-header { background:#fff; border-bottom:1px solid #e8eaed; padding:36px 40px 28px; }
+    .page-header-inner { max-width:1000px; }
+    .page-title { font-size:2rem; font-weight:700; color:#1d2733; line-height:1.2; margin-bottom:8px; }
+    .page-meta { font-size:0.82rem; color:#8b8fa8; margin-bottom:16px; }
+    .page-desc { font-size:0.95rem; color:#4a5568; line-height:1.7; max-width:740px; }
+    .tag-bar { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+    .tag { font-size:0.72rem; font-weight:600; padding:3px 10px; border-radius:4px; background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; }
+    .tag.red { background:#fef2f2; color:#7f1d1d; border-color:#fecaca; }
+    .tag.green { background:#f0fdf4; color:#14532d; border-color:#bbf7d0; }
+    .tag.orange { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
+    .tag.gray { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+    .content { max-width:1000px; margin:36px auto 80px; padding:0 40px; }
+
+    .section { margin-bottom:40px; }
+    .section-title { font-size:1.15rem; font-weight:700; color:#1d2733; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid #e8eaed; }
+
+    /* INTRO */
+    .intro-box { background:white; border-radius:10px; border:1px solid #e8eaed; padding:24px; margin-bottom:32px; border-left:4px solid #0070f3; }
+    .intro-box p { font-size:0.9rem; color:#4a5568; line-height:1.75; margin-bottom:10px; }
+    .intro-box p:last-child { margin-bottom:0; }
+    .intro-box strong { color:#1d2733; }
+
+    /* EXCEPTION TYPES */
+    .exc-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:32px; }
+    .exc-card { background:white; border-radius:8px; border:1px solid #e8eaed; padding:14px; border-top:3px solid; }
+    .exc-card.price  { border-color:#d97706; }
+    .exc-card.grir   { border-color:#0a6ed1; }
+    .exc-card.dup    { border-color:#16a34a; }
+    .exc-card.po     { border-color:#7c3aed; }
+    .exc-card.vendor { border-color:#dc2626; }
+    .exc-icon  { font-size:1.4rem; margin-bottom:6px; }
+    .exc-title { font-size:0.82rem; font-weight:700; color:#1d2733; margin-bottom:4px; }
+    .exc-desc  { font-size:0.75rem; color:#6b7280; line-height:1.5; }
+
+    /* SCENARIO GRID */
+    .scenario-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:32px; }
+    .scenario-col { background:white; border-radius:10px; border:1px solid #e8eaed; overflow:hidden; }
+    .scenario-col-header { padding:14px 18px; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+    .scenario-col-header.challenge { background:#fef2f2; color:#dc2626; }
+    .scenario-col-header.ai        { background:#eff6ff; color:#1d4ed8; }
+    .scenario-col-header.outcome   { background:#f0fdf4; color:#16a34a; }
+    .scenario-col-body { padding:16px 18px; }
+    .scenario-col-body ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .scenario-col-body li { font-size:0.85rem; color:#444; line-height:1.6; padding-left:14px; position:relative; }
+    .scenario-col-body li::before { content:'◆'; position:absolute; left:0; font-size:0.5rem; top:6px; }
+    .challenge .scenario-col-body li::before { color:#dc2626; }
+    .ai .scenario-col-body li::before        { color:#1d4ed8; }
+    .outcome .scenario-col-body li::before   { color:#16a34a; }
+    .scenario-col-body li strong { color:#0a2540; }
+
+    /* JOURNEY */
+    .journey-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+    .journey-col { background:white; border-radius:10px; border:1px solid #e8eaed; overflow:hidden; }
+    .journey-col-header { padding:14px 18px; font-size:0.85rem; font-weight:700; }
+    .journey-col-header.before { background:#fef2f2; color:#dc2626; }
+    .journey-col-header.after  { background:#f0fdf4; color:#16a34a; }
+    .journey-steps { padding:16px 18px; display:flex; flex-direction:column; gap:12px; }
+    .journey-step { display:flex; align-items:flex-start; gap:12px; }
+    .journey-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+    .journey-icon.bad  { background:#fee2e2; }
+    .journey-icon.good { background:#dcfce7; }
+    .journey-text { font-size:0.85rem; color:#444; line-height:1.55; padding-top:4px; }
+    .journey-text strong { color:#0a2540; display:block; margin-bottom:2px; }
+
+    /* METRICS */
+    .metrics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:32px; }
+    .metric-card { background:white; border-radius:8px; border:1px solid #e8eaed; padding:16px; text-align:center; }
+    .metric-before { font-size:1.4rem; font-weight:800; color:#dc2626; }
+    .metric-arrow  { font-size:0.9rem; color:#9ca3af; margin:2px 0; }
+    .metric-after  { font-size:1.4rem; font-weight:800; color:#16a34a; }
+    .metric-label  { font-size:0.78rem; color:#6b7280; margin-top:4px; }
+
+    /* CHALLENGES */
+    .challenges-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:32px; }
+    .challenge-card { background:white; border-radius:8px; border:1px solid #e8eaed; padding:16px; border-left:3px solid #fca5a5; }
+    .challenge-card-icon  { font-size:1.4rem; margin-bottom:6px; }
+    .challenge-card-title { font-size:0.88rem; font-weight:700; color:#dc2626; margin-bottom:6px; }
+    .challenge-card-body  { font-size:0.83rem; color:#555; line-height:1.6; }
+
+    /* HITL */
+    .hitl-box { background:white; border-radius:10px; border:1px solid #e8eaed; padding:24px; margin-bottom:32px; border-left:4px solid #7c3aed; }
+    .hitl-box h3 { font-size:1rem; font-weight:700; color:#7c3aed; margin-bottom:12px; }
+    .hitl-box p  { font-size:0.88rem; color:#444; line-height:1.7; margin-bottom:10px; }
+    .hitl-box p:last-child { margin-bottom:0; }
+    .hitl-dep { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .hitl-dep-item { background:#ede9fe; color:#6d28d9; padding:6px 14px; border-radius:8px; font-size:0.8rem; font-weight:600; }
+
+    /* ROADMAP */
+    .roadmap-item { display:flex; gap:12px; align-items:flex-start; font-size:0.85rem; color:#374151; line-height:1.6; }
+    .roadmap-item span.dot { color:#6e4bdb; flex-shrink:0; margin-top:2px; }
+
+    footer { text-align:center; padding:24px; font-size:0.78rem; color:#b0b5c0; border-top:1px solid #e8eaed; background:#fff; }
+  </style>
+  <link rel="icon" type="image/png" href="gem.png">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon"><img src="gem.png" style="width:32px;height:32px;object-fit:contain;"></div>
+    <div>
+      <div class="sidebar-logo-text">Joule UX</div>
+      
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Overview</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">⊞</span> Dashboard</a>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section-label">Теми</div>
+    <a href="joule-evaluations.html" class="nav-item"><span class="nav-icon">▸</span> Agent Evaluations</a>
+    <a href="joule-evaluations-flow.html" class="nav-item sub"><span class="nav-icon">▸</span> Evaluations Flow</a>
+    <a href="joule-testing-eval-sync.html" class="nav-item sub"><span class="nav-icon">▸</span> Testing &amp; Eval Sync</a>
+    <!-- JOULE-FLOW-HIDDEN <a href="joule-ap-invoice.html" class="nav-item"><span class="nav-icon">▸</span> Joule Flow</a> -->
+    <a href="joule-flow-ap-invoice.html" class="nav-item sub active"><span class="nav-icon">▸</span> AP Invoice</a> -->
+    <!-- JOULE-FLOW-HIDDEN <a href="joule-flow-discovery.html" class="nav-item sub"><span class="nav-icon">▸</span> Discovery Session</a> -->
+    <!-- JOULE-FLOW-HIDDEN <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="nav-item"><span class="nav-icon">▸</span> SWOT Analysis</a> -->
+    <div class="nav-divider"></div>
+    <div class="sidebar-section-label">Reference</div>
+    <a href="joule-studio-glossary.html" class="nav-item"><span class="nav-icon">▸</span> Речник</a>
+    <a href="https://pages.github.tools.sap/I765278/joule-studio-h2-vision/" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Vision Prototype</a>
+  </nav>
+  <div class="sidebar-footer">2026<br/>Joule Studio UX Team</div>
+</aside>
+
+<div class="main-wrap">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="page-title">AP Invoice Exception — Агентски Workflow</div>
+      <div class="page-meta">TechEd EAC Scope · Сценарий 2 — AP Invoice Exception</div>
+      <div class="page-desc">Управление на изключения във фактури чрез AI агенти, SAP Domain модели и Events. E2E Human-in-the-Loop workflow с SAP Task Center.</div>
+      <div class="tag-bar">
+        <span class="tag orange">TechEd EAC Scope</span>
+        <span class="tag">Joule Flow</span>
+        <span class="tag red">Human-in-the-Loop</span>
+        <span class="tag green">S/4HANA Cloud</span>
+        <span class="tag gray">SAP Task Center</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="intro-box">
+      <p><strong>AP (Accounts Payable)</strong> е отделът, отговорен за обработка и плащане на фактури към доставчици. Когато фактура не съвпада с поръчката или с получената стока — тя се блокира автоматично в S/4HANA. Някой трябва да разбере защо и да реши какво да се прави.</p>
+      <p>Днес това е изцяло ръчна работа — AP Clerk отваря 4-5 системи, прекарва 45 минути на фактура и обработва 6 от 47 до края на деня. Joule Flow агентът автоматизира целия анализ и резолюцията, като пренасочва към AP Clerk само изключенията, които наистина изискват човешко решение — чрез SAP Task Center.</p>
+      <p>Това е E2E Human-in-the-Loop сценарият за <strong>TechEd 2026</strong> и ключов deliverable в EAC програмата.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">5 вида изключения</div>
+      <div class="exc-grid">
+        <div class="exc-card price"><div class="exc-icon">💰</div><div class="exc-title">Price Mismatch</div><div class="exc-desc">Фактурираната цена се различава от договорената в PO. Най-честото изключение.</div></div>
+        <div class="exc-card grir"><div class="exc-icon">📦</div><div class="exc-title">GR/IR Mismatch</div><div class="exc-desc">Стоката не е получена (GR) или количеството се различава от фактурираното (IR).</div></div>
+        <div class="exc-card dup"><div class="exc-icon">🔁</div><div class="exc-title">Duplicate Invoice</div><div class="exc-desc">Доставчикът е изпратил вече платена фактура отново — 0.1–0.5% от всички фактури.</div></div>
+        <div class="exc-card po"><div class="exc-icon">📋</div><div class="exc-title">Missing PO</div><div class="exc-desc">Фактурата не е свързана с поръчка — невъзможно е да се верифицира.</div></div>
+        <div class="exc-card vendor"><div class="exc-icon">🚫</div><div class="exc-title">Vendor Block</div><div class="exc-desc">Доставчикът е блокиран поради compliance или финансови проблеми.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Сценарий — Предизвикателство, Действие на AI, Резултат</div>
+      <div class="scenario-grid">
+        <div class="scenario-col challenge">
+          <div class="scenario-col-header challenge">Предизвикателство</div>
+          <div class="scenario-col-body"><ul>
+            <li>Фактури блокирани поради 3-way match failure, price/quantity mismatch, дубликати, фактури без PO</li>
+            <li>Забавени плащания, пропуснати отстъпки за ранно плащане, late payment penalty, vendor escalation</li>
+            <li>AP Clerk прекарва 45 мин. на изключение — ръчна проверка в 4-5 системи</li>
+            <li>Няма SLA enforcement — никой не знае кои изключения са критични</li>
+            <li>Vendor комуникацията е несистематична и неконсистентна</li>
+          </ul></div>
+        </div>
+        <div class="scenario-col ai">
+          <div class="scenario-col-header ai">Действие на AI</div>
+          <div class="scenario-col-body"><ul>
+            <li><strong>Детектира изключението</strong> — получава AP Invoice с блокировка автоматично</li>
+            <li><strong>Диагностицира root cause</strong> — не само "match failed" но защо</li>
+            <li><strong>Проверява контекста</strong> — PO, GR, vendor delivery notes, предишни фактури</li>
+            <li><strong>Класифицира</strong> — tolerance variance / genuine discrepancy / timing issue</li>
+            <li><strong>Решава или ескалира</strong> — действа в рамките на policy, подготвя всичко за човека ако е нужно</li>
+          </ul></div>
+        </div>
+        <div class="scenario-col outcome">
+          <div class="scenario-col-header outcome">Резултат</div>
+          <div class="scenario-col-body"><ul>
+            <li>Времето за резолюция намалява от 3-5 дни до минути</li>
+            <li>80% от изключенията се решават автоматично без човешка намеса</li>
+            <li>AP Clerk взима решение за 90 секунди вместо 45 минути</li>
+            <li>Vendor комуникацията е автоматична, консистентна, на езика на доставчика</li>
+            <li>Пълен audit trail за всяко решение с доказателства</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hitl-box">
+      <h3>Human-in-the-Loop — Връзката с SAP Task Center</h3>
+      <p>Когато агентът прецени, че изключението изисква човешко решение — изпраща задача в <strong>SAP Task Center (Joule Work)</strong>. AP Clerk не вижда празна фактура за преглед, а пълен анализ: root cause, контекст, препоръка на агента и готов vendor отговор. Решението отнема 90 секунди.</p>
+      <p>Workflow approver-ите могат да конфигурират Substitution rules — ако AP Clerk отсъства, задачата автоматично се делегира. При приближаване на SLA deadline агентът ескалира към AP Manager чрез Boundary Events.</p>
+      <div class="hitl-dep">
+        <div class="hitl-dep-item">Task Management MCP</div>
+        <div class="hitl-dep-item">Agent Gateway</div>
+        <div class="hitl-dep-item">SAP Task Center</div>
+        <div class="hitl-dep-item">SAP Event Mesh</div>
+        <div class="hitl-dep-item">S/4HANA Cloud APIs</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">AP Clerk — Преди и след Joule Flow</div>
+      <div class="journey-grid">
+        <div class="journey-col">
+          <div class="journey-col-header before">😟 Днес — Понеделник сутринта</div>
+          <div class="journey-steps">
+            <div class="journey-step"><div class="journey-icon bad">📬</div><div class="journey-text"><strong>Отваря inbox</strong>47 непрочетени имейла от доставчици за блокирани фактури</div></div>
+            <div class="journey-step"><div class="journey-icon bad">🖥️</div><div class="journey-text"><strong>Влиза в S/4HANA</strong>Ръчно проверява blocked invoice report</div></div>
+            <div class="journey-step"><div class="journey-icon bad">🔍</div><div class="journey-text"><strong>Изследва всяка фактура</strong>PO · GR · Ariba contract · 45 минути на фактура</div></div>
+            <div class="journey-step"><div class="journey-icon bad">📧</div><div class="journey-text"><strong>Пише rejection имейл</strong>Без шаблон · несистематично · без contract reference</div></div>
+            <div class="journey-step"><div class="journey-icon bad">⏰</div><div class="journey-text"><strong>Край на деня</strong>Обработени 6 изключения. 41 все още чакат.</div></div>
+          </div>
+        </div>
+        <div class="journey-col">
+          <div class="journey-col-header after">😊 С Joule Flow — Същата сутрин</div>
+          <div class="journey-steps">
+            <div class="journey-step"><div class="journey-icon good">📱</div><div class="journey-text"><strong>Отваря Task Center</strong>2 изключения изискват решение · 45 решени автоматично overnight</div></div>
+            <div class="journey-step"><div class="journey-icon good">🤖</div><div class="journey-text"><strong>Анализът на агента е готов</strong>Основна причина · доказателства · препоръка · изготвен отговор до доставчика</div></div>
+            <div class="journey-step"><div class="journey-icon good">⚡</div><div class="journey-text"><strong>90-секундно решение</strong>Преглежда анализа · кликва Reject · готово</div></div>
+            <div class="journey-step"><div class="journey-icon good">📧</div><div class="journey-text"><strong>Доставчикът е известен автоматично</strong>Изготвено писмо с клаузата от договора · на езика на доставчика</div></div>
+            <div class="journey-step"><div class="journey-icon good">☕</div><div class="journey-text"><strong>09:05 — готово</strong>47 фактури обработени. Сутринта свободна за стратегическа работа.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Business Impact</div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-before">45 мин</div><div class="metric-arrow">↓</div><div class="metric-after">90 сек</div><div class="metric-label">Време на изключение</div></div>
+        <div class="metric-card"><div class="metric-before">20%</div><div class="metric-arrow">↓</div><div class="metric-after">80%</div><div class="metric-label">Автономна резолюция</div></div>
+        <div class="metric-card"><div class="metric-before">3–5 дни</div><div class="metric-arrow">↓</div><div class="metric-after">Минути</div><div class="metric-label">Резолюция на изключение</div></div>
+        <div class="metric-card"><div class="metric-before">0.5%</div><div class="metric-arrow">↓</div><div class="metric-after">~0%</div><div class="metric-label">Платени дубликати</div></div>
+        <div class="metric-card"><div class="metric-before">15%</div><div class="metric-arrow">↓</div><div class="metric-after">90%</div><div class="metric-label">Усвоени отстъпки за ранно плащане</div></div>
+        <div class="metric-card"><div class="metric-before">Частичен</div><div class="metric-arrow">↓</div><div class="metric-after">Пълен</div><div class="metric-label">Одитна следа на решенията</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Ключови предизвикателства днес</div>
+      <div class="challenges-grid">
+        <div class="challenge-card"><div class="challenge-card-icon">📧</div><div class="challenge-card-title">Изключенията се управляват по имейл</div><div class="challenge-card-body">AP clerks откриват блокирани фактури ръчно или чрез имейли от доставчици. Без систематично detection — фактури стоят непроверени с дни.</div></div>
+        <div class="challenge-card"><div class="challenge-card-icon">🔍</div><div class="challenge-card-title">45 минути изследване на изключение</div><div class="challenge-card-body">За всяка блокирана фактура: S/4HANA, PO, GR, Ariba contract, изчисляване на variance. Всичко ръчно. Всичко повтаряемо.</div></div>
+        <div class="challenge-card"><div class="challenge-card-icon">📅</div><div class="challenge-card-title">Няма SLA enforcement</div><div class="challenge-card-body">Фактури блокирани с дни без действие. AP мениджърите нямат видимост кои изключения са отворени и кои рискуват да нарушат payment terms deadline.</div></div>
+        <div class="challenge-card"><div class="challenge-card-icon">💬</div><div class="challenge-card-title">Несистематична vendor комуникация</div><div class="challenge-card-body">Всеки AP clerk пише собствен rejection имейл. Без стандарт, без contract references. Vendors получават непоследователни съобщения.</div></div>
+        <div class="challenge-card"><div class="challenge-card-icon">📂</div><div class="challenge-card-title">Непълна одитна следа</div><div class="challenge-card-body">Мотивите за решенията живеят в имейл нишки. При одит реконструкцията отнема часове. Compliance риск в регулирани индустрии.</div></div>
+        <div class="challenge-card"><div class="challenge-card-icon">💸</div><div class="challenge-card-title">Пропуснати отстъпки за ранно плащане</div><div class="challenge-card-body">2/10 net 30 отстъпка на €50,000 фактура = €1,000 — годишна доходност от 36%. AP екипите рядко имат време да оптимизират сроковете при ръчна обработка.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Joule Flow — Roadmap на имплементацията</div>
+      <div style="background:white;border:1px solid #e8eaed;border-radius:10px;overflow:hidden;">
+        <div style="background:#eef2ff;border-bottom:1px solid #c7d2fe;padding:14px 20px;font-size:0.85rem;font-weight:700;color:#3730a3;">Управление на изключения във фактури чрез агенти, SAP Domain модели и Events</div>
+        <div style="padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div class="roadmap-item"><span class="dot">◆</span><span>Joule Flow web агентът създава Workflow чрез <strong>Intent Based Development</strong>.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Абонира се и консумира <strong>Invoice Events</strong> или планира задача за периодично получаване на всички блокирани фактури.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>JavaScript node за предварителна обработка — <strong>(Script task)</strong>.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Консумира <strong>AP Invoice LoB агент</strong> / Custom агент, деплойнат от клиента <strong>(agent task)</strong>.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Определя AP Clerk / експерти от shared service center за преглед на изключения и деблокиране на фактури <strong>(Decision / RM)</strong>.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Известявания към AP Clerk / shared service center / AP Process owners — напр. LLM-генерирано съдържание.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Ескалация към AP Manager / Team lead за спазване на срокове <strong>(Boundary Events)</strong>.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Задачи за одобрение в <strong>Joule Work (SAP Task Center)</strong> за преглед на изключения и деблокиране на фактури <strong>(Human Task)</strong>.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Workflow approver-ите конфигурират <strong>Substitution rules</strong> за делегиране на задачи.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span>Консумира <strong>SAP S/4HANA Cloud APIs</strong> и деблокира фактури (Actions, custom MCP, LoB MCP).</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span><strong>Тест, деплой и оторизация</strong> — управление чрез Git, задаване на роли чрез IAS.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span><strong>Мониторинг</strong> — наблюдение на Joule Flow инстанции, логове и задачи от customer IT.</span></div>
+          <div class="roadmap-item"><span class="dot">◆</span><span><strong>Анализи</strong> — бизнес KPI за AP Process owners / оператори.</span></div>
+          <div style="margin-top:8px;padding-top:12px;border-top:1px solid #f0f1f3;display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:0.68rem;font-weight:600;background:#f0edfc;color:#5b21b6;border:1px solid #c4b5fd;padding:3px 10px;border-radius:4px">TechEd EAC Scope</span>
+            <span style="font-size:0.68rem;font-weight:600;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 10px;border-radius:4px">S/4HANA Cloud</span>
+            <span style="font-size:0.68rem;font-weight:600;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:3px 10px;border-radius:4px">SAP Task Center</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <footer>AP Invoice Exception — TechEd EAC Scope &nbsp;·&nbsp; Joule Flow &nbsp;·&nbsp; юли 2026</footer>
+</div>
+</body>
+</html>
