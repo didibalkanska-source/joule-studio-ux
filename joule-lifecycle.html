@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agent Lifecycle — Joule UX</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: #f5f6f8; color: #1d2733; display: flex; min-height:100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar { width:220px; min-height:100vh; background:#fff; border-right:1px solid #e8eaed; display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+    .sidebar-logo { padding:20px 18px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e8eaed; }
+    .sidebar-logo-icon { width:32px; height:32px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sidebar-logo-text { font-size:0.82rem; font-weight:700; color:#1d2733; line-height:1.2; }
+    .sidebar-section-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#b0b5c0; padding:16px 18px 6px; }
+    .sidebar-nav { flex:1; padding:8px 0; overflow-y:auto; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:8px 18px; text-decoration:none; color:#4a5568; font-size:0.82rem; font-weight:500; transition:background 0.12s, color 0.12s; position:relative; }
+    .nav-item:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:#6e4bdb; border-radius:0 2px 2px 0; }
+    .nav-item.sub { padding-left:32px; font-size:0.78rem; color:#6b7280; }
+    .nav-item.sub:hover { background:#f5f3ff; color:#5b21b6; }
+    .nav-item.sub.active { background:#f0edfc; color:#5b21b6; font-weight:600; }
+    .nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .nav-divider { height:1px; background:#f0f1f3; margin:6px 18px; }
+    .sidebar-footer { padding:14px 18px; border-top:1px solid #e8eaed; font-size:0.65rem; color:#b0b5c0; line-height:1.5; }
+
+    /* ── MAIN ── */
+    .main-wrap { margin-left:220px; flex:1; min-width:0; }
+    .page-content { padding:32px 40px 60px; max-width:1100px; }
+
+    .page-title { font-size:1.35rem; font-weight:700; color:#1d2129; margin-bottom:4px; }
+    .page-subtitle { font-size:0.82rem; color:#6b7280; margin-bottom:32px; }
+
+    /* ── PHASE RAIL ── */
+    .phase-rail {
+      display: flex;
+      gap: 0;
+      margin-bottom: 36px;
+      border: 1px solid #e4e6ea;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .phase-pill {
+      flex: 1;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-right: 1px solid #e4e6ea;
+      transition: background 0.15s, color 0.15s;
+      line-height: 1.3;
+    }
+    .phase-pill:last-child { border-right: none; }
+    .phase-pill .phase-num { font-size: 0.6rem; font-weight: 400; opacity: 0.7; display: block; margin-bottom: 2px; }
+    .phase-pill:hover { background: #f5f3ff; color: #5b21b6; }
+    .phase-pill.active { background: #6e4bdb; color: #fff; }
+    .phase-pill[data-phase="1"] { color: #7c3aed; }
+    .phase-pill[data-phase="1"].active { background: #7c3aed; color:#fff; }
+    .phase-pill[data-phase="2"] { color: #0891b2; }
+    .phase-pill[data-phase="2"].active { background: #0891b2; color:#fff; }
+    .phase-pill[data-phase="3"] { color: #059669; }
+    .phase-pill[data-phase="3"].active { background: #059669; color:#fff; }
+    .phase-pill[data-phase="4"] { color: #d97706; }
+    .phase-pill[data-phase="4"].active { background: #d97706; color:#fff; }
+    .phase-pill[data-phase="5"] { color: #dc2626; }
+    .phase-pill[data-phase="5"].active { background: #dc2626; color:#fff; }
+    .phase-pill[data-phase="6"] { color: #6b7280; }
+    .phase-pill[data-phase="6"].active { background: #6b7280; color:#fff; }
+
+    /* ── PHASE BLOCK ── */
+    .phase-block {
+      background: #fff;
+      border: 1px solid #e4e6ea;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f1f3;
+    }
+    .phase-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .phase-title { font-size: 1rem; font-weight: 700; color: #1d2129; }
+    .phase-tagline { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
+    .phase-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    /* color per phase */
+    .ph1 .phase-header { background: #f5f3ff; }
+    .ph1 .phase-badge { background: #ede9fe; color: #7c3aed; border: 1px solid #c4b5fd; }
+    .ph2 .phase-header { background: #ecfeff; }
+    .ph2 .phase-badge { background: #cffafe; color: #0891b2; border: 1px solid #67e8f9; }
+    .ph3 .phase-header { background: #ecfdf5; }
+    .ph3 .phase-badge { background: #d1fae5; color: #059669; border: 1px solid #6ee7b7; }
+    .ph4 .phase-header { background: #fffbeb; }
+    .ph4 .phase-badge { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
+    .ph5 .phase-header { background: #fef2f2; }
+    .ph5 .phase-badge { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+    .ph6 .phase-header { background: #f9fafb; }
+    .ph6 .phase-badge { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+
+    /* ── TERM LIST ── */
+    .term-list { padding: 8px 0 4px; }
+    .term-item {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .term-item:last-child { border-bottom: none; }
+    .term-name {
+      padding: 12px 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1d2129;
+      border-right: 1px solid #f3f4f6;
+      background: #fafafa;
+      display: flex;
+      align-items: flex-start;
+      line-height: 1.4;
+    }
+    .term-def {
+      padding: 12px 20px;
+      font-size: 0.82rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+    .term-def strong { color: #1d2129; font-weight: 600; }
+
+    /* ── EXTENSIBILITY SECTION ── */
+    .ext-block {
+      background: #fff;
+      border: 1px solid #e4e6ea;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .ext-header {
+      background: #ecfdf5;
+      border-bottom: 1px solid #e4e6ea;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ext-title { font-size: 1rem; font-weight: 700; color: #065f46; }
+    .ext-subtitle { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
+    .ext-badge { background: #d1fae5; color: #059669; border: 1px solid #6ee7b7; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 20px; }
+
+    .persona-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+    }
+    .persona-col {
+      padding: 16px 20px;
+      border-right: 1px solid #f3f4f6;
+    }
+    .persona-col:last-child { border-right: none; }
+    .persona-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #059669;
+      margin-bottom: 10px;
+    }
+    .persona-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 0.78rem;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+    .persona-step-num {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #059669;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .persona-step strong { color: #1d2129; font-weight: 600; display: block; margin-bottom: 2px; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #9ca3af;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { width:180px; }
+      .main-wrap { margin-left:180px; }
+      .term-item { grid-template-columns: 1fr; }
+      .term-name { border-right: none; border-bottom: 1px solid #f3f4f6; }
+      .persona-grid { grid-template-columns: 1fr; }
+      .persona-col { border-right: none; border-bottom: 1px solid #f3f4f6; }
+      .phase-rail { flex-wrap: wrap; }
+    }
+  </style>
+  <link rel="icon" type="image/png" href="gem.png">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon"><img src="gem.png" style="width:32px;height:32px;object-fit:contain;"></div>
+    <div><div class="sidebar-logo-text">Joule UX</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Overview</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">⊞</span> Dashboard</a>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section-label">Теми</div>
+    <a href="joule-evaluations.html" class="nav-item"><span class="nav-icon">▸</span> Agent Evaluations</a>
+    <a href="joule-evaluations-flow.html" class="nav-item sub"><span class="nav-icon">▸</span> Evaluations Flow</a>
+    <a href="joule-testing-eval-sync.html" class="nav-item sub"><span class="nav-icon">▸</span> Testing &amp; Eval Sync</a>
+    <a href="joule-lifecycle.html" class="nav-item active"><span class="nav-icon">▸</span> Agent Lifecycle</a>
+    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="nav-item"><span class="nav-icon">▸</span> SWOT Analysis</a>
+    <div class="nav-divider"></div>
+    <div class="sidebar-section-label">Reference</div>
+    <a href="joule-studio-glossary.html" class="nav-item"><span class="nav-icon">▸</span> Речник</a>
+    <a href="https://pages.github.tools.sap/I765278/joule-studio-h2-vision/" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Vision Prototype</a>
+  </nav>
+  <div class="sidebar-footer">2026<br/>Joule Studio UX Team</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap">
+<div class="page-content">
+
+  <div class="page-title">Agent Lifecycle</div>
+  <div class="page-subtitle">6 фази от Plan &amp; Build до Optimize &amp; Decommission · Joule Studio · SAP AI Agent Hub · SAP Agent Gateway</div>
+
+  <!-- PHASE NAVIGATION RAIL -->
+  <div class="phase-rail">
+    <div class="phase-pill active" data-phase="1">
+      <span class="phase-num">Фаза 1</span>Plan &amp; Build
+    </div>
+    <div class="phase-pill" data-phase="2">
+      <span class="phase-num">Фаза 2</span>Discover &amp; Provision
+    </div>
+    <div class="phase-pill" data-phase="3">
+      <span class="phase-num">Фаза 3</span>Run &amp; Scale
+    </div>
+    <div class="phase-pill" data-phase="4">
+      <span class="phase-num">Фаза 4</span>Observe &amp; Analyze
+    </div>
+    <div class="phase-pill" data-phase="5">
+      <span class="phase-num">Фаза 5</span>Secure &amp; Govern
+    </div>
+    <div class="phase-pill" data-phase="6">
+      <span class="phase-num">Фаза 6</span>Optimize &amp; Decommission
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase-block ph1" id="phase-1">
+    <div class="phase-header">
+      <div class="phase-icon">🏗️</div>
+      <div>
+        <div class="phase-title">Plan &amp; Build</div>
+        <div class="phase-tagline">Създаване на агент с архитектурен и бизнес контекст, съобразен с организационната стратегия</div>
+      </div>
+      <span class="phase-badge" style="margin-left:auto">Фаза 1</span>
+    </div>
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-name">Intent-Based Development</div>
+        <div class="term-def">Workflow, започващ с описание на бизнес резултат на естествен език. Joule Studio превежда описанието в <strong>PRD</strong> (Product Requirements Document), технически спецификации, agent logic и deployment артефакти.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">PRD → SPEC → code</div>
+        <div class="term-def"><strong>Iterative Track:</strong> от бизнес проблем → PRD → SPEC с вграден SAP контекст → генериран код. Grounding е "grounded in real business processes" и "aligned with enterprise architecture".</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Process context</div>
+        <div class="term-def"><strong>SAP Signavio</strong> допринася с process models и agent mining на design stage — реални процеси стават основа за агент логиката.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Architecture insights</div>
+        <div class="term-def"><strong>SAP LeanIX</strong> допринася с архитектурен контекст на design time — агентите се проектират в рамките на съществуващия enterprise ландшафт.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Joule Studio Agent SDK</div>
+        <div class="term-def">SDK вътре в Joule Studio, опростяващ разработката на агенти — предоставя готови паттерни и интеграции.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Solution versioning</div>
+        <div class="term-def">Инструменти за collaboration и versioning, позволяващи enterprise екипи да build-ват, review-ват и итерират с <strong>SAP-managed Git service</strong>.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Value modeling</div>
+        <div class="term-def">Инструменти, оценяващи очаквания бизнес impact <em>преди</em> deployment — обоснована инвестиция.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-block ph2" id="phase-2">
+    <div class="phase-header">
+      <div class="phase-icon">🚀</div>
+      <div>
+        <div class="phase-title">Discover &amp; Provision</div>
+        <div class="phase-tagline">Богат agent inventory и deployment с guardrails и необходимия достъп</div>
+      </div>
+      <span class="phase-badge" style="margin-left:auto">Фаза 2</span>
+    </div>
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-name">Agent &amp; MCP Registry</div>
+        <div class="term-def">Inventory catalog за discoverable агенти и MCP сървъри — централизиран регистър за всички налични capabilities.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Deployment to Git</div>
+        <div class="term-def">Пълното решение се версионира в Git за reviewable, repeatable и portable промени.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Approval gate</div>
+        <div class="term-def">Push към GitHub и ръчно тригване на GitHub Actions workflow — умишлена approval стъпка преди production deployment.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Vercel integration</div>
+        <div class="term-def">Позволява build и deploy на модерни front-end приложения директно от intent-based flow.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Deployment pipeline</div>
+        <div class="term-def">GH Action package-ва source кода, вика Joule Studio API и deploy-ва агента в production runtime.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-block ph3" id="phase-3">
+    <div class="phase-header">
+      <div class="phase-icon">⚙️</div>
+      <div>
+        <div class="phase-title">Run &amp; Scale</div>
+        <div class="phase-tagline">Изпълнение на прости и сложни агенти в напълно гъвкава и управлявана среда</div>
+      </div>
+      <span class="phase-badge" style="margin-left:auto">Фаза 3</span>
+    </div>
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-name">Joule Studio Runtime</div>
+        <div class="term-def">Напълно управлявана execution среда на <strong>SAP Business AI Platform</strong> — SAP-managed, enterprise-grade runtime за production агенти.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Built-in gateways</div>
+        <div class="term-def">Вградени конектори за data products, APIs, AI модели и agent-to-agent взаимодействия.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">SAP Agent Gateway</div>
+        <div class="term-def">Задължителен unified connectivity hub, координиращ <strong>agent-to-agent</strong>, <strong>agent-to-tool</strong> и <strong>agent-to-Joule</strong> трафик. Вж. Gateway entity за 6-те core capabilities и разграничението TRAP 13 vs MCP Gateway.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-block ph4" id="phase-4">
+    <div class="phase-header">
+      <div class="phase-icon">📊</div>
+      <div>
+        <div class="phase-title">Observe &amp; Analyze</div>
+        <div class="phase-tagline">Превръщане на observable agent telemetry в actionable intelligence</div>
+      </div>
+      <span class="phase-badge" style="margin-left:auto">Фаза 4</span>
+    </div>
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-name">Performance monitoring</div>
+        <div class="term-def">Непрекъснато проследяване на <strong>cost/usage сигнали</strong> и observability в реално време.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Lifecycle observability</div>
+        <div class="term-def">Operations tooling с <strong>tracing, metrics и logging</strong> — пълна видимост за поведението на агента.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Advanced observability</div>
+        <div class="term-def">Cost attribution, performance trends и anomaly detection — за проактивна оптимизация.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Deployment visibility</div>
+        <div class="term-def">Deployment статусът се вижда директно в <strong>GitHub Actions</strong>. Администраторите виждат solution, deployments и observability данни в prod Engagement Layer.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase-block ph5" id="phase-5">
+    <div class="phase-header">
+      <div class="phase-icon">🔒</div>
+      <div>
+        <div class="phase-title">Secure &amp; Govern</div>
+        <div class="phase-tagline">Агентите действат в рамките на организационните политики — governance при точката на изпълнение</div>
+      </div>
+      <span class="phase-badge" style="margin-left:auto">Фаза 5</span>
+    </div>
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-name">SAP AI Agent Hub</div>
+        <div class="term-def">Централното място за управление и governance на агенти в enterprise мащаб.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Agent Evals &amp; Assessment</div>
+        <div class="term-def">Evaluation tooling за качество и поведение на агентите — преди и след production.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Admin-level governance</div>
+        <div class="term-def"><strong>Role-based access</strong>, lifecycle policies и oversight от dev до production. "Governed and observed at scale."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase-block ph6" id="phase-6">
+    <div class="phase-header">
+      <div class="phase-icon">🔄</div>
+      <div>
+        <div class="phase-title">Optimize &amp; Decommission</div>
+        <div class="phase-tagline">Планиране за развиващи се нужди и максимизиране на impact</div>
+      </div>
+      <span class="phase-badge" style="margin-left:auto">Фаза 6</span>
+    </div>
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-name">Continuous optimization</div>
+        <div class="term-def">Резултатите се "continuously optimized through performance intelligence" — данните от фаза 4 захранват тази фаза.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-name">Guided transition support</div>
+        <div class="term-def">Помага на клиенти и партньори да преминат към Joule Studio инкрементално, защитавайки предишните инвестиции.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXTENSIBILITY -->
+  <div class="section-label" style="margin-top:8px">Cross-cutting pattern</div>
+  <div class="ext-block">
+    <div class="ext-header">
+      <div class="phase-icon">🔌</div>
+      <div>
+        <div class="ext-title">Extensibility</div>
+        <div class="ext-subtitle">Agent Extensibility платформата координира 3 персони — действа над целия lifecycle</div>
+      </div>
+      <span class="ext-badge" style="margin-left:auto">Cross-cutting</span>
+    </div>
+
+    <!-- UMS explanation -->
+    <div style="padding:14px 20px 10px;border-bottom:1px solid #f3f4f6;font-size:0.82rem;color:#4b5563;line-height:1.6;">
+      <strong>Unified Metadata Service (UMS)</strong> — централен registry за extension point дефиниции. Осигурява discoverability между LoB Developer, Partner Developer и runtime агента.
+    </div>
+
+    <div class="persona-grid">
+      <!-- LoB Agent Developer -->
+      <div class="persona-col">
+        <div class="persona-label">LoB Agent Developer</div>
+        <div class="persona-step">
+          <div class="persona-step-num">1</div>
+          <div><strong>Make agent extensible</strong>Декларира extensible части: skills, tools, hooks, fields.</div>
+        </div>
+        <div class="persona-step">
+          <div class="persona-step-num">2</div>
+          <div><strong>Publish extension points</strong>Дефинициите се публикуват в UMS за discoverability.</div>
+        </div>
+      </div>
+      <!-- Partner Developer -->
+      <div class="persona-col">
+        <div class="persona-label">Partner Developer</div>
+        <div class="persona-step">
+          <div class="persona-step-num">3</div>
+          <div><strong>Deploy extensions</strong>Разгръща extensions в Extension Service, което регистрира metadata в UMS.</div>
+        </div>
+      </div>
+      <!-- Running Agent (Runtime) -->
+      <div class="persona-col">
+        <div class="persona-label">Running Agent (Runtime)</div>
+        <div class="persona-step">
+          <div class="persona-step-num">4</div>
+          <div><strong>Retrieve extensions</strong>Чете extension metadata от UMS за context-applicable extensions.</div>
+        </div>
+        <div class="persona-step">
+          <div class="persona-step-num">5</div>
+          <div><strong>Create observability</strong>Emitва observability данни за extension usage и execution.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-content -->
+</div><!-- /main-wrap -->
+
+<script>
+  const pills = document.querySelectorAll('.phase-pill');
+  const blocks = document.querySelectorAll('.phase-block');
+
+  function showPhase(num) {
+    pills.forEach(p => p.classList.toggle('active', p.dataset.phase === String(num)));
+    blocks.forEach(b => {
+      const isTarget = b.id === 'phase-' + num;
+      b.style.display = isTarget ? '' : 'none';
+    });
+  }
+
+  // Show only phase 1 on load, hide the rest
+  showPhase(1);
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => showPhase(pill.dataset.phase));
+  });
+</script>
+
+</body>
+</html>
