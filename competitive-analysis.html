@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="bg" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agent Monitoring — Competitive Analysis 2026</title>
+  <style>
+    /* ── Design tokens ──────────────────────────────────────────────── */
+    :root {
+      --surface-0:    #f9f9f7;
+      --surface-1:    #fcfcfb;
+      --surface-2:    #f2f2f0;
+      --text-pri:     #0b0b0b;
+      --text-sec:     #52514e;
+      --text-muted:   #898781;
+      --border:       #e1e0d9;
+      --baseline:     #c3c2b7;
+      /* sequential blue for heatmap */
+      --heat-0:       #eeeee9;
+      --heat-1:       #9ec5f4;
+      --heat-2:       #2a78d6;
+      /* categorical (tool identity) */
+      --c1: #2a78d6;
+      --c2: #eb6834;
+      --c3: #1baf7a;
+      --c4: #eda100;
+      --c5: #d55181;
+      --c6: #008300;
+      /* status */
+      --good: #006300;
+      --shadow: 0 2px 12px rgba(11,11,11,0.08);
+    }
+    html[data-theme="dark"] {
+      --surface-0:    #0d0d0d;
+      --surface-1:    #1a1a19;
+      --surface-2:    #222221;
+      --text-pri:     #ffffff;
+      --text-sec:     #c3c2b7;
+      --text-muted:   #898781;
+      --border:       #2c2c2a;
+      --baseline:     #383835;
+      --heat-0:       #2c2c2a;
+      --heat-1:       #1c5cab;
+      --heat-2:       #5598e7;
+      --c1: #3987e5;
+      --c2: #d95926;
+      --c3: #199e70;
+      --c4: #c98500;
+      --c5: #d55181;
+      --c6: #008300;
+      --good: #0ca30c;
+      --shadow: 0 2px 16px rgba(0,0,0,0.32);
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--surface-0);
+      color: var(--text-pri);
+      line-height: 1.5;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Page header ─────────────────────────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .page-title  { font-size: 26px; font-weight: 700; line-height: 1.2; }
+    .page-sub    { font-size: 14px; color: var(--text-sec); margin-top: 4px; }
+    .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .page-date   { font-size: 12px; color: var(--text-muted); }
+    .theme-btn {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-sec);
+      cursor: pointer;
+    }
+    .theme-btn:hover { background: var(--surface-2); }
+
+    /* ── Section ─────────────────────────────────────────────────────── */
+    .section { margin-bottom: 52px; }
+    .section-head { margin-bottom: 18px; }
+    .section-title { font-size: 18px; font-weight: 700; }
+    .section-desc  { font-size: 13px; color: var(--text-sec); margin-top: 3px; }
+
+    /* ── Hero row ────────────────────────────────────────────────────── */
+    .hero-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 52px;
+    }
+    .hero-tile {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+    }
+    .hero-value {
+      display: block;
+      font-size: 44px;
+      font-weight: 300;
+      color: var(--text-pri);
+      line-height: 1.05;
+    }
+    .hero-value.accent { color: var(--c1); }
+    .hero-value.zero   { color: var(--text-muted); }
+    .hero-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+    /* ── Tool cards ──────────────────────────────────────────────────── */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    .tool-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .tool-accent { height: 4px; }
+    .tool-body   { padding: 18px; }
+    .tool-name   { font-size: 15px; font-weight: 700; color: var(--text-pri); }
+    .tool-tag    { font-size: 12px; color: var(--text-muted); margin-top: 2px; margin-bottom: 14px; line-height: 1.4; }
+    .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .bar-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); width: 64px; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+    .bar-fill  { height: 100%; border-radius: 3px; }
+    .bar-pct   { font-size: 11px; font-weight: 700; color: var(--text-sec); width: 32px; text-align: right; flex-shrink: 0; }
+    .tool-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 5px; }
+    .chip {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .chip-u { background: #eef4ff; color: #1c5cab; }
+    .chip-g { background: #fff2f2; color: #8c2020; }
+    html[data-theme="dark"] .chip-u { background: #1a2a40; color: #86b6ef; }
+    html[data-theme="dark"] .chip-g { background: #2e1010; color: #e08080; }
+
+    /* ── Capability heatmap ──────────────────────────────────────────── */
+    .heatmap-wrap {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .hm-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .hm-corner {
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      width: 170px;
+    }
+    .hm-group {
+      background: var(--surface-2);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .hm-col-hdr {
+      background: var(--surface-2);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sec);
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      text-align: center;
+      vertical-align: middle;
+      line-height: 1.3;
+    }
+    .hm-row-hdr {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-pri);
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      height: 48px;
+      vertical-align: middle;
+    }
+    .tool-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .hm-cell {
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      height: 48px;
+      cursor: pointer;
+      position: relative;
+    }
+    .hm-cell:last-child { border-right: none; }
+    .hm-row:last-child .hm-cell,
+    .hm-row:last-child .hm-row-hdr { border-bottom: none; }
+    .hm-cell-fill {
+      position: absolute;
+      inset: 2px;
+      border-radius: 4px;
+      transition: filter 0.15s;
+    }
+    .hm-cell:hover .hm-cell-fill { filter: brightness(1.1); }
+    .hm-sep { border-left: 2px solid var(--border) !important; }
+    .hm-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 11px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .legend-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-sec); }
+    .legend-sw { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; }
+
+    /* ── Feature matrix ──────────────────────────────────────────────── */
+    .fm-wrap {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .fm-table { width: 100%; border-collapse: collapse; }
+    .fm-corner-hdr {
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      min-width: 230px;
+      padding: 8px 14px;
+    }
+    .fm-tool-hdr {
+      background: var(--surface-2);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--text-sec);
+      text-align: center;
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      width: 100px;
+      vertical-align: middle;
+      line-height: 1.3;
+    }
+    .fm-tool-hdr:last-child { border-right: none; }
+    .fm-feat-hdr {
+      font-size: 13px;
+      color: var(--text-pri);
+      font-weight: 600;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .fm-feat-sub { display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+    .fm-cell {
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      vertical-align: middle;
+      padding: 10px 4px;
+    }
+    .fm-cell:last-child { border-right: none; }
+    .fm-row:last-child .fm-cell,
+    .fm-row:last-child .fm-feat-hdr { border-bottom: none; }
+    .dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+    }
+    .dot-full  { background: var(--heat-2); }
+    .dot-half  { background: var(--heat-1); }
+    .dot-empty { border: 1.5px solid var(--border); background: transparent; }
+    .fm-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 11px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Opportunities ───────────────────────────────────────────────── */
+    .opp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .opp-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .opp-accent { height: 4px; }
+    .opp-body   { padding: 20px; }
+    .opp-num    { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 8px; }
+    .opp-title  { font-size: 17px; font-weight: 700; line-height: 1.25; margin-bottom: 10px; }
+    .opp-desc   { font-size: 13px; color: var(--text-sec); line-height: 1.6; margin-bottom: 14px; }
+    .opp-callout {
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 11px 14px;
+      border-radius: 6px;
+    }
+
+    /* ── Tooltip ─────────────────────────────────────────────────────── */
+    .tooltip {
+      position: fixed;
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      max-width: 260px;
+      pointer-events: none;
+      z-index: 999;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+    .tt-title { font-size: 13px; font-weight: 700; color: var(--text-pri); margin-bottom: 4px; }
+    .tt-body  { font-size: 12px; color: var(--text-sec); line-height: 1.45; }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    .page-footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
+
+    /* ── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 820px) {
+      .tool-grid  { grid-template-columns: 1fr 1fr; }
+      .opp-grid   { grid-template-columns: 1fr; }
+      .hero-row   { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .tool-grid { grid-template-columns: 1fr; }
+      .hero-row  { grid-template-columns: 1fr; }
+    }
+
+    /* ── Joule sidebar ─────────────────────────────────────────────── */
+    .jl-sidebar{width:220px;min-height:100vh;background:#fff;border-right:1px solid #e8eaed;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:200;}
+    .jl-logo{padding:20px 18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e8eaed;}
+    .jl-logo-text{font-size:0.82rem;font-weight:700;color:#1d2733;line-height:1.2;}
+    .jl-sec{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#b0b5c0;padding:16px 18px 6px;}
+    .jl-sidebar nav{flex:1;padding:8px 0;overflow-y:auto;}
+    .jl-foot{padding:14px 18px;border-top:1px solid #e8eaed;font-size:0.65rem;color:#b0b5c0;line-height:1.5;}
+    .jl-sidebar a.sn{display:flex;align-items:center;gap:10px;padding:8px 18px;text-decoration:none;color:#4a5568;font-size:0.82rem;font-weight:500;transition:background 0.12s,color 0.12s;position:relative;}
+    .jl-sidebar a.sn:hover{background:#f5f3ff;color:#5b21b6;}
+    .jl-sidebar a.sn.act{background:#f0edfc;color:#5b21b6;font-weight:600;}
+    .jl-sidebar a.sn.act::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#6e4bdb;border-radius:0 2px 2px 0;}
+    .jl-sidebar a.sn.sub{padding-left:32px;font-size:0.78rem;color:#6b7280;}
+    .jl-sidebar a.sn.sub:hover{background:#f5f3ff;color:#5b21b6;}
+    .jl-div{height:1px;background:#f0f1f3;margin:6px 18px;}
+    body{margin-left:220px;}
+  </style>
+</head>
+<body>
+
+<aside class="jl-sidebar">
+  <div class="jl-logo">
+    <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="gem.png" style="width:32px;height:32px;object-fit:contain"></div>
+    <div><div class="jl-logo-text">Joule UX</div></div>
+  </div>
+  <nav>
+    <div class="jl-sec">Overview</div>
+    <a href="index.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">⊞</span> Dashboard</a>
+    <div class="jl-div"></div>
+    <div class="jl-sec">Теми</div>
+    <a href="joule-evaluations.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Agent Evaluations</a>
+    <a href="joule-evaluations-flow.html" class="sn sub"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Evaluations Flow</a>
+    <a href="joule-testing-eval-sync.html" class="sn sub"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Testing &amp; Eval Sync</a>
+    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> SWOT Analysis</a>
+    <a href="competitor-monitoring-eval.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Monitoring Research</a>
+    <a href="competitive-analysis.html" class="sn sub act"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Competitive Analysis</a>
+    <div class="jl-div"></div>
+    <div class="jl-sec">Reference</div>
+    <a href="joule-studio-glossary.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Речник</a>
+    <a href="https://pages.github.tools.sap/I765278/joule-studio-h2-vision/" target="_blank" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">↗</span> Vision Prototype</a>
+    <a href="http://localhost:5173/" target="_blank" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">↗</span> Monitoring Prototype</a>
+  </nav>
+  <div class="jl-foot">2026<br>Joule Studio UX Team</div>
+</aside>
+<div class="page">
+
+  <!-- Header -->
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">AI Agent Monitoring — Конкурентен анализ</h1>
+      <p class="page-sub">Monitoring &amp; Observability за AI Agent платформи · Контекст за Joule Studio дизайн</p>
+    </div>
+    <div class="header-right">
+      <span class="page-date">Август 2026 · Diana Balkanska</span>
+      <button class="theme-btn" onclick="toggleTheme()">☀ / ◑ режим</button>
+    </div>
+  </header>
+
+  <!-- Hero row -->
+  <div class="hero-row">
+    <div class="hero-tile">
+      <span class="hero-value accent">6</span>
+      <span class="hero-label">Инструмента анализирани</span>
+    </div>
+    <div class="hero-tile">
+      <span class="hero-value accent">2</span>
+      <span class="hero-label">Персони: Developer · Admin</span>
+    </div>
+    <div class="hero-tile">
+      <span class="hero-value zero">0</span>
+      <span class="hero-label">Инструмента с добро dual-persona UX</span>
+    </div>
+    <div class="hero-tile">
+      <span class="hero-value accent">4</span>
+      <span class="hero-label">Design opportunities за Joule Studio</span>
+    </div>
+  </div>
+
+  <!-- Tool cards -->
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Анализирани инструменти</h2>
+      <p class="section-desc">Developer score = покритие на trace depth, error debug, token cost, evaluation · Admin score = aggregated KPIs, alerts, business outcomes, cost governance</p>
+    </div>
+    <div class="tool-grid" id="tool-grid"></div>
+  </section>
+
+  <!-- Capability heatmap -->
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Capability Matrix</h2>
+      <p class="section-desc">Hover върху клетка за детайл — синьото показва силата на coverage по всяка ос</p>
+    </div>
+    <div class="heatmap-wrap">
+      <table class="hm-table" id="hm-table"></table>
+      <div class="hm-legend">
+        <span class="legend-lbl">Легенда</span>
+        <div class="legend-item"><div class="legend-sw" style="background:var(--heat-0);border:1px solid var(--border)"></div>Отсъства</div>
+        <div class="legend-item"><div class="legend-sw" style="background:var(--heat-1)"></div>Частично</div>
+        <div class="legend-item"><div class="legend-sw" style="background:var(--heat-2)"></div>Силно</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature matrix -->
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Enterprise Features — Nice-to-Have</h2>
+      <p class="section-desc">Функции, присъстващи само при enterprise-позиционирани платформи · ● присъства · ◑ частично · ○ отсъства</p>
+    </div>
+    <div class="fm-wrap">
+      <table class="fm-table" id="fm-table"></table>
+      <div class="fm-legend">
+        <span class="legend-lbl">Легенда</span>
+        <div class="legend-item"><div class="dot dot-full"></div>Присъства</div>
+        <div class="legend-item"><div class="dot dot-half"></div>Частично</div>
+        <div class="legend-item"><div class="dot dot-empty"></div>Отсъства</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Opportunities -->
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Design Opportunities за Joule Studio</h2>
+      <p class="section-desc">Gaps при всички конкуренти едновременно — пространство за диференциация</p>
+    </div>
+    <div class="opp-grid" id="opp-grid"></div>
+  </section>
+
+  <footer class="page-footer">
+    Изграден на база публична документация, август 2026. Никой от инструментите не е тестван hands-on.
+  </footer>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-body"  id="tt-body"></div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────
+const TOOLS = [
+  { id: 0, name: 'LangSmith',         tag: 'Developer-first LLM observability (LangChain)',      cvar: '--c1', devPct: 100, adminPct: 25,  uniq: ['Prod→dataset 1 click', 'Nested traces'],     gap: 'Без admin view' },
+  { id: 1, name: 'Langfuse',          tag: 'Open-source, self-hosted, prompt management',        cvar: '--c2', devPct: 75,  adminPct: 62,  uniq: ['Self-hosted', 'Prompt versioning'],          gap: 'Без business metrics' },
+  { id: 2, name: 'Azure AI Foundry',  tag: 'Enterprise safety & eval pipeline (Microsoft)',      cvar: '--c3', devPct: 75,  adminPct: 75,  uniq: ['Safety filters dashboard', 'OpenTelemetry'], gap: 'Изисква Azure' },
+  { id: 3, name: 'Arize Phoenix',     tag: 'RAG-специализиран, local-first, LLM-as-judge',      cvar: '--c4', devPct: 87,  adminPct: 12,  uniq: ['RAG observability', 'Local-first'],          gap: 'Без production ops' },
+  { id: 4, name: 'AWS Bedrock Agents',tag: 'AWS-native с CloudWatch интеграция',                 cvar: '--c5', devPct: 50,  adminPct: 50,  uniq: ['Inline trace в response', 'AWS ecosystem'],  gap: 'Custom CloudWatch setup' },
+  { id: 5, name: 'Vertex AI',         tag: 'Continuous monitoring + Failure Clusters (Google)',  cvar: '--c6', devPct: 75,  adminPct: 75,  uniq: ['Online Monitors', 'Failure Clusters'],       gap: '3 отделни GCP tools' },
+];
+
+// [LangSmith, Langfuse, Azure, Phoenix, AWS, Vertex]
+// Dev cols: trace_depth, error_debug, token_cost, evaluation
+// Admin cols: agg_kpis, alerts, biz_outcomes, cost_gov
+const SCORES = [
+  [2, 2, 2, 2,   1, 0, 0, 1],
+  [2, 1, 2, 1,   2, 1, 0, 2],
+  [2, 1, 1, 2,   2, 2, 0, 2],
+  [2, 2, 1, 2,   1, 0, 0, 0],
+  [1, 1, 1, 1,   1, 2, 0, 1],
+  [2, 2, 0, 2,   2, 2, 1, 1],
+];
+
+const CAP_GROUPS = [
+  {
+    label: 'Developer Capabilities',
+    cols:  ['Trace depth', 'Error debug', 'Token cost', 'Evaluation'],
+    tips:  [
+      'Per-step trace с пълен input/output и latency за всяка операция от agent pipeline-а',
+      'Filtered drill-down до failed tool calls, unexpected behavior и error categorization',
+      'Token usage и прогнозна цена на trace ниво и по-стъпка за cost visibility',
+      'Offline quality scoring: task success rate, correctness, safety, tool trajectory',
+    ]
+  },
+  {
+    label: 'Admin / Operator Capabilities',
+    cols:  ['Aggregated KPIs', 'Alerts', 'Biz outcomes', 'Cost governance'],
+    tips:  [
+      'Fleet-level health dashboard: error rate, latency trends, total invocations',
+      'Threshold-based alerts с нотификации — email, PagerDuty, Slack при anomaly',
+      'Resolution rate, deflection, escalation rate, CSAT — business-level outcomes',
+      'Cost attribution по agent, team, tenant, subscription; budget reporting',
+    ]
+  }
+];
+
+const ENT_FEATURES = [
+  { name: 'Resolution / deflection rate', desc: 'Дали агентът е решил заявката',        p: [0, 0, 0, 0, 0, 1] },
+  { name: 'Escalation rate',              desc: 'Прехвърляне към човек',                 p: [0, 0, 0, 0, 0, 1] },
+  { name: 'CSAT / user feedback',         desc: 'End-user satisfaction score',           p: [1, 0, 0, 0, 1, 1] },
+  { name: 'Safety / content filtering',   desc: 'Harmful content filter dashboard',      p: [0, 0, 2, 0, 1, 0] },
+  { name: 'ROI / savings calculator',     desc: 'Бизнес стойност и спестявания',         p: [0, 0, 0, 0, 0, 0] },
+  { name: 'CI/CD eval integration',       desc: 'Pytest, CLI, automated pipeline',       p: [1, 0, 1, 1, 0, 2] },
+  { name: 'Continuous production scoring',desc: 'Live traffic scoring без test set',     p: [0, 0, 0, 0, 0, 2] },
+  { name: 'Version comparison (eval)',    desc: 'Before/after agent version diff',       p: [1, 1, 1, 0, 0, 2] },
+];
+
+const OPPS = [
+  {
+    cvar: '--c1',
+    title: 'Unified Persona-Aware Surface',
+    desc: 'Всички конкуренти избират или Developer-first (raw traces, без business context) или Admin-first (KPIs, без техническа дълбочина). Никой не е решил dual-persona проблема в един coherent UI.',
+    callout: '<strong>Joule може:</strong> Contextual switching между Developer view (trace depth, token cost, tool calls) и Operator view (outcomes, escalations, deflection) без смяна на tool или URL. SAP Fiori има design language за role-based perspectives.',
+    cbg: '#eef4ff', cbgd: '#1a2a40', ccol: '#1c5cab', ccold: '#86b6ef',
+  },
+  {
+    cvar: '--c3',
+    title: 'Guided "Why Did It Fail?" Flow',
+    desc: 'Всички инструменти показват ЧЕ е имало грешка. Никой не води по structured diagnostic path: грешка → тип → причина → suggested fix.',
+    callout: '<strong>Joule може:</strong> При failed trace да предложи guided root cause wizard: "Tool timeout? → Check connector config → [link]", "Hallucination? → Ground in knowledge source → [action]". Затваря observability цикъла до corrective action в един workflow.',
+    cbg: '#edfaf4', cbgd: '#0f2a20', ccol: '#0a6648', ccold: '#4dcfa5',
+  },
+  {
+    cvar: '--c4',
+    title: 'SAP Business Context в Trace View',
+    desc: 'Всеки конкурент показва generic LLM trace. Никой не показва business entity context: кой SAP document се обработва, кой business process е тригернат, какъв е downstream ефектът.',
+    callout: '<strong>Joule може:</strong> SAP-enriched trace: "Agent processed PO #4500012345 → created 3 actions in MM module → 1 action failed". Невъзможно за конкурент без SAP интеграция.',
+    cbg: '#fff8e6', cbgd: '#2a2000', ccol: '#7a5800', ccold: '#d4a020',
+  },
+  {
+    cvar: '--c5',
+    title: 'Actionable Improvement Loop',
+    desc: 'Всички инструменти са read-only за non-developers. Operator вижда проблем → отваря тикет → developer поправя. Затвореният цикъл не съществува в нито един product.',
+    callout: '<strong>Joule може:</strong> При session с нисък score: "Flag for developer review" с pre-filled context от конкретния trace, или inline prompt editor с governed approval flow — без напускане на monitoring.',
+    cbg: '#fef0f5', cbgd: '#2a0f1a', ccol: '#7a1040', ccold: '#e087b8',
+  },
+];
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function cv(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function isDark() { return document.documentElement.dataset.theme === 'dark'; }
+
+function scoreColor(s) {
+  return [cv('--heat-0'), cv('--heat-1'), cv('--heat-2')][s];
+}
+
+// ── Build tool cards ──────────────────────────────────────────────────
+function buildToolCards() {
+  const grid = document.getElementById('tool-grid');
+  grid.innerHTML = TOOLS.map(t => {
+    const col = cv(t.cvar);
+    return `<div class="tool-card">
+      <div class="tool-accent" style="background:${col}"></div>
+      <div class="tool-body">
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-tag">${t.tag}</div>
+        <div class="bar-row">
+          <span class="bar-lbl">Developer</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${t.devPct}%;background:${col}"></div></div>
+          <span class="bar-pct">${t.devPct}%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">Admin</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${t.adminPct}%;background:${col};opacity:0.55"></div></div>
+          <span class="bar-pct">${t.adminPct}%</span>
+        </div>
+        <hr class="tool-divider" />
+        <div class="chip-row">
+          ${t.uniq.map(u => `<span class="chip chip-u">${u}</span>`).join('')}
+          <span class="chip chip-g">Gap: ${t.gap}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Build heatmap ─────────────────────────────────────────────────────
+function buildHeatmap() {
+  const table = document.getElementById('hm-table');
+  const allTips = CAP_GROUPS.flatMap(g => g.tips);
+
+  let h = '<thead>';
+
+  // Group headers
+  h += `<tr><th class="hm-corner"></th>`;
+  CAP_GROUPS.forEach((g, gi) => {
+    h += `<th class="hm-group${gi > 0 ? ' hm-sep' : ''}" colspan="${g.cols.length}">${g.label}</th>`;
+  });
+  h += '</tr>';
+
+  // Column headers
+  h += `<tr><th class="hm-corner" style="padding:8px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);text-align:left">Інструмент</th>`;
+  CAP_GROUPS.forEach((g, gi) => {
+    g.cols.forEach((c, ci) => {
+      h += `<th class="hm-col-hdr${gi > 0 && ci === 0 ? ' hm-sep' : ''}">${c}</th>`;
+    });
+  });
+  h += '</tr></thead><tbody>';
+
+  // Tool rows
+  TOOLS.forEach((t, ti) => {
+    const col = cv(t.cvar);
+    h += `<tr class="hm-row">
+      <td class="hm-row-hdr"><span class="tool-dot" style="background:${col}"></span>${t.name}</td>`;
+    CAP_GROUPS.forEach((g, gi) => {
+      g.cols.forEach((c, ci) => {
+        const idx = gi * 4 + ci;
+        const s   = SCORES[ti][idx];
+        const bg  = scoreColor(s);
+        const tipTitle = `${t.name} · ${c}`;
+        const tipBody  = s === 0 ? 'Не е налично' : `${['—', 'Частично', 'Силно'][s]} — ${allTips[idx]}`;
+        h += `<td class="hm-cell${gi > 0 && ci === 0 ? ' hm-sep' : ''}"
+          data-tt="${tipTitle}|||${tipBody}">
+          <div class="hm-cell-fill" style="background:${bg}"></div>
+        </td>`;
+      });
+    });
+    h += '</tr>';
+  });
+
+  h += '</tbody>';
+  table.innerHTML = h;
+
+  table.querySelectorAll('.hm-cell').forEach(cell => {
+    cell.addEventListener('mouseenter', e => { const [ti, bo] = cell.dataset.tt.split('|||'); showTT(e, ti, bo); });
+    cell.addEventListener('mousemove',  moveTO);
+    cell.addEventListener('mouseleave', hideTT);
+  });
+}
+
+// ── Build feature matrix ──────────────────────────────────────────────
+function buildFeatureMatrix() {
+  const table = document.getElementById('fm-table');
+  const shortNames = ['LangSmith', 'Langfuse', 'Azure', 'Phoenix', 'AWS', 'Vertex'];
+
+  let h = `<thead><tr><th class="fm-corner-hdr"></th>`;
+  TOOLS.forEach((t, ti) => {
+    const col = cv(t.cvar);
+    h += `<th class="fm-tool-hdr">
+      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col};margin-bottom:5px"></span><br>
+      ${shortNames[ti]}
+    </th>`;
+  });
+  h += '</tr></thead><tbody>';
+
+  ENT_FEATURES.forEach(f => {
+    h += `<tr class="fm-row">
+      <td class="fm-feat-hdr">${f.name}<span class="fm-feat-sub">${f.desc}</span></td>`;
+    f.p.forEach(v => {
+      const dotCls = v === 2 ? 'dot-full' : v === 1 ? 'dot-half' : 'dot-empty';
+      h += `<td class="fm-cell"><div class="dot ${dotCls}"></div></td>`;
+    });
+    h += '</tr>';
+  });
+
+  h += '</tbody>';
+  table.innerHTML = h;
+}
+
+// ── Build opportunities ───────────────────────────────────────────────
+function buildOpportunities() {
+  const grid = document.getElementById('opp-grid');
+  grid.innerHTML = OPPS.map((o, i) => {
+    const col  = cv(o.cvar);
+    const cbg  = isDark() ? o.cbgd  : o.cbg;
+    const ccol = isDark() ? o.ccold : o.ccol;
+    return `<div class="opp-card">
+      <div class="opp-accent" style="background:${col}"></div>
+      <div class="opp-body">
+        <div class="opp-num">Opportunity 0${i + 1}</div>
+        <div class="opp-title" style="color:${col}">${o.title}</div>
+        <p class="opp-desc">${o.desc}</p>
+        <div class="opp-callout" style="background:${cbg};color:${ccol}">${o.callout}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Tooltip ───────────────────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+const ttTitle = document.getElementById('tt-title');
+const ttBody  = document.getElementById('tt-body');
+
+function showTT(e, title, body) {
+  ttTitle.textContent = title;
+  ttBody.textContent  = body;
+  tooltip.style.display = 'block';
+  moveTO(e);
+}
+function moveTO(e) {
+  let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + 270 > window.innerWidth) x = e.clientX - 280;
+  if (y + 80  > window.innerHeight) y = e.clientY - 90;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top  = y + 'px';
+}
+function hideTT() { tooltip.style.display = 'none'; }
+
+// ── Theme ─────────────────────────────────────────────────────────────
+function toggleTheme() {
+  document.documentElement.dataset.theme =
+    document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  buildAll();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+function buildAll() {
+  buildToolCards();
+  buildHeatmap();
+  buildFeatureMatrix();
+  buildOpportunities();
+}
+
+buildAll();
+</script>
+</body>
+</html>

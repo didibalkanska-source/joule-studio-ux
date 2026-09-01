@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Control Tower — Design Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 14px;
+    background: #f9f9f7;
+    color: #1d2532;
+    line-height: 1.6;
+    margin-left: 220px;
+  }
+
+  /* ── Joule sidebar ─────────────────────────────── */
+  .jl-sidebar {
+    position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
+    background: #1a1a19; color: #c3c2b7; display: flex;
+    flex-direction: column; padding: 16px 0; overflow-y: auto; z-index: 100;
+  }
+  .sidebar-logo { padding: 0 16px 20px; font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+  .nav-section { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #636361; padding: 12px 16px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 16px; color: #c3c2b7; text-decoration: none; font-size: 13px; border-radius: 0; transition: background 0.15s, color 0.15s; cursor: pointer; }
+  .nav-item:hover { background: #2a2a28; color: #fff; }
+  .nav-item.active { background: #2a2a28; color: #fff; }
+  .nav-item.sub { padding-left: 32px; font-size: 12px; color: #898781; }
+  .nav-item.sub:hover { color: #c3c2b7; }
+  .nav-icon { font-size: 11px; opacity: 0.6; }
+
+  /* ── Page layout ───────────────────────────────── */
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  .page-meta {
+    font-size: 12px;
+    color: #898781;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .page-meta span { display: flex; align-items: center; gap: 4px; }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0b0b0b;
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-size: 15px;
+    color: #52514e;
+    margin-bottom: 40px;
+    max-width: 600px;
+  }
+
+  /* ── Section header ────────────────────────────── */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #898781;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e1e0d9;
+  }
+
+  /* ── Finding card ──────────────────────────────── */
+  .finding {
+    background: #fff;
+    border: 1px solid #e1e0d9;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .finding-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .finding-badge {
+    flex-shrink: 0;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .badge-gap       { background: #fff0f0; color: #c0392b; }
+  .badge-question  { background: #fff8e6; color: #9a6200; }
+  .badge-pattern   { background: #e8f4ff; color: #1558a8; }
+  .badge-risk      { background: #f3f0ff; color: #5a3dff; }
+
+  .finding-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0b0b0b;
+  }
+  .finding-component {
+    font-size: 12px;
+    color: #898781;
+    margin-top: 2px;
+  }
+  .finding-body {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+
+  /* ── Questions block ───────────────────────────── */
+  .questions {
+    background: #f9f9f7;
+    border: 1px solid #e1e0d9;
+    border-radius: 6px;
+    padding: 12px 16px;
+  }
+  .questions-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #898781;
+    margin-bottom: 8px;
+  }
+  .questions ol {
+    padding-left: 18px;
+  }
+  .questions li {
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 5px;
+  }
+  .questions li:last-child { margin-bottom: 0; }
+
+  /* ── Summary table ─────────────────────────────── */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .summary-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #898781;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e1e0d9;
+    background: #fff;
+  }
+  .summary-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0efec;
+    vertical-align: top;
+    color: #374151;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: #fafaf8; }
+  .summary-table-wrap {
+    background: #fff;
+    border: 1px solid #e1e0d9;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  /* ── Persona chip ──────────────────────────────── */
+  .persona {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .persona-admin { background: #e8f4ff; color: #1558a8; }
+  .persona-dev   { background: #f0fdf4; color: #15803d; }
+  .persona-both  { background: #f3f0ff; color: #5a3dff; }
+
+  /* ── Divider ───────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid #e1e0d9; margin: 40px 0; }
+
+  /* ── Footer ────────────────────────────────────── */
+  .footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid #e1e0d9;
+    font-size: 12px;
+    color: #898781;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- Joule sidebar -->
+<aside class="jl-sidebar">
+  <div class="sidebar-logo">Joule Studio UX</div>
+  <div class="nav-section">Overview</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">▸</span> Dashboard</a>
+  <div class="nav-section">Research</div>
+  <a href="competitor-monitoring-eval.html" class="nav-item"><span class="nav-icon">▸</span> Monitoring Research</a>
+  <a href="competitive-analysis.html" class="nav-item sub"><span class="nav-icon">▸</span> Competitive Analysis</a>
+  <div class="nav-section">Control Tower</div>
+  <a href="control-tower-design-review.html" class="nav-item active"><span class="nav-icon">▸</span> Design Review</a>
+  <div class="nav-section">Reference</div>
+  <a href="http://localhost:5173/" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Monitoring Prototype</a>
+</aside>
+
+<div class="page">
+
+  <div class="page-meta">
+    <span>📋 Design Review</span>
+    <span>·</span>
+    <span>Control Tower — Overview</span>
+    <span>·</span>
+    <span>31 август 2026</span>
+  </div>
+
+  <h1>Control Tower — Пропуски и отворени въпроси</h1>
+  <p class="page-subtitle">
+    Преглед на информационната архитектура и UX на Control Tower Overview страницата.
+    Документът е подготвен за обсъждане с дизайнерския екип и Product Management.
+  </p>
+
+  <!-- Section 1: Charts -->
+  <div class="section">
+    <div class="section-label">Визуализации — Overview Cards</div>
+
+    <!-- Finding 1 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-badge badge-gap">Пропуск</span>
+        <div>
+          <div class="finding-title">Donut chart — половината fleet не се използва, но няма action signal</div>
+          <div class="finding-component">Solutions Based on Usage · donut chart</div>
+        </div>
+      </div>
+      <p class="finding-body">
+        От 564 solution-а, 271 (почти 50%) попадат в категории None (73) и Limited (198).
+        Диаграмата показва разпределението, но не изразява дали това е нормално, притеснително или критично за tenant-а.
+        Администраторът вижда числото — но не получава indication за следваща стъпка.
+        Ако целта е да се адресира под-използването, диаграмата трябва да носи и action signal, не само distribution.
+      </p>
+      <div class="questions">
+        <div class="questions-label">Въпроси към дизайн и PM</div>
+        <ol>
+          <li>Каква е expected нормата за None/Limited usage в enterprise tenant? Имаме ли baseline за сравнение?</li>
+          <li>Трябва ли None сегментът да бъде визуално акцентиран (напр. предупредителен цвят) или е редовна бизнес ситуация?</li>
+          <li>Трябва ли диаграмата да носи inline препоръка — напр. "73 неизползвани solution-а — препоръчва се преглед"?</li>
+          <li>За кого е action-ът: само Администратора или и Builder-ите трябва да са уведомени?</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Finding 2 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-badge badge-gap">Пропуск</span>
+        <div>
+          <div class="finding-title">Line chart — единицата "m" е неясна, липсва reference point</div>
+          <div class="finding-component">AI Token Cost Over Time · line chart</div>
+        </div>
+      </div>
+      <p class="finding-body">
+        Y-оста използва "m" без дефиниция — милиони токени? Мегатокени? Потребителят не може да оцени дали 260m е нормална,
+        висока или критична консумация без контекст. Освен това двете линии (Running vs Building) нямат reference line
+        или budget threshold — т.е. диаграмата показва trend, но не дава basis за decision.
+        Ако консумацията расте, кога трябва Администраторът да реагира?
+      </p>
+      <div class="questions">
+        <div class="questions-label">Въпроси към дизайн и PM</div>
+        <ol>
+          <li>Какво означава "m" — трябва ли да се покаже пълната единица (M tokens, billions, $)?</li>
+          <li>Има ли budget threshold или quota per tenant? Ако да — трябва ли да се визуализира като reference line в графиката?</li>
+          <li>Какво е desired действие при рязко покачване на Running линията — alert, notification, или само информация?</li>
+          <li>Trябва ли Running и Building да се сумират или винаги да се показват отделно? Кой случай е по-полезен за Admin vs Builder?</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Finding 3 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-badge badge-question">Въпрос</span>
+        <div>
+          <div class="finding-title">Stat tiles — 4 метрики без ясна йерархия или тренд</div>
+          <div class="finding-component">Number of Errors · Deployment Errors · Artefacts not Running · Completed Sessions</div>
+        </div>
+      </div>
+      <p class="finding-body">
+        Четирите stat tiles показват моментни стойности (651 грешки, 551 неработещи artefacts), но без:
+        delta спрямо предходния период, trend sparkline или severity indicator.
+        651 грешки — добро или лошо? Повече или по-малко от вчера?
+        Особено "Artefacts not Running: 551" е потенциално критична метрика, но дизайнът я третира еднакво с "Completed Sessions: 24".
+      </p>
+      <div class="questions">
+        <div class="questions-label">Въпроси към дизайн и PM</div>
+        <ol>
+          <li>Трябва ли stat tiles да показват delta (↑ +12% vs yesterday)? Какъв е access до historical data?</li>
+          <li>Има ли severity threshold за "Artefacts not Running" — при колко неработещи artefacts трябва да се задейства alert?</li>
+          <li>Каква е разликата между "Errors" и "Deployment Errors" — overlap ли има или са напълно независими метрики?</li>
+          <li>"Completed Sessions: 24" — за какъв период? Last 7 days (както filter-ът показва) или all time?</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Table -->
+  <div class="section">
+    <div class="section-label">Solutions таблица</div>
+
+    <!-- Finding 4 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-badge badge-question">Въпрос</span>
+        <div>
+          <div class="finding-title">Usage badge — дефиниция на High / Medium / Low / None</div>
+          <div class="finding-component">Solutions table · Usage column</div>
+        </div>
+      </div>
+      <p class="finding-body">
+        Таблицата показва Usage (High / Medium / Low / None) като badge, но не е ясно какво точно измерва —
+        честота на използване? Брой уникални потребители? Консумирани токени? Бизнес критичност?
+        Без дефиниция, Administrator-ът не може да действа на база на тази колона.
+      </p>
+      <div class="questions">
+        <div class="questions-label">Въпроси към дизайн и PM</div>
+        <ol>
+          <li>Какъв е exact definition на Usage нивата — на каква метрика се базират (invocations, sessions, tokens, active users)?</li>
+          <li>Каква е threshold-а между High / Medium / Low — фиксирана или relative спрямо fleet-а?</li>
+          <li>Tooltip ли трябва да обяснява всяко ниво, или tooltip не е достатъчен и трябва documentation link?</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Finding 5 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-badge badge-pattern">Паттерн</span>
+        <div>
+          <div class="finding-title">Tokens колона — единица "k" без контекст и без сортиране по cost</div>
+          <div class="finding-component">Solutions table · Tokens column</div>
+        </div>
+      </div>
+      <p class="finding-body">
+        "300k" и "49k" — токени или стойност в $? Редовете не са сортирани по tokens по подразбиране,
+        т.е. "Load new Contracts" с 300k е на трето място, а "Load MCP Server" с 49k е последен.
+        Ако целта на администратора е cost optimization, default sort по Tokens (desc) би бил по-полезен от алфабетичен по Solution Name.
+      </p>
+      <div class="questions">
+        <div class="questions-label">Въпроси към дизайн и PM</div>
+        <ol>
+          <li>Каква е primary задачата на администратора в тази таблица — cost overview, status check, или нещо друго?</li>
+          <li>Трябва ли default sort да е по Tokens (desc) или по Errors (desc) вместо по Solution Name?</li>
+          <li>Tokens показва ли raw count или monetary стойност? Ако е raw count — трябва ли да се добави $ column?</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Finding 6 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-badge badge-risk">Риск</span>
+        <div>
+          <div class="finding-title">Failed status без severity — 4 Failed solution-а изглеждат еднакво</div>
+          <div class="finding-component">Solutions table · Status column</div>
+        </div>
+      </div>
+      <p class="finding-body">
+        "LoadOnboardingFlow" (22k tokens, 12 errors) и "Load MCP Server" (49k tokens, 3 errors) са и двата "Failed"
+        с еднакъв червен badge. Но един Failed AI Agent с 23 errors и High usage (Supplier Diversity Verifier)
+        е критично различен от Failed MCP Server с 3 errors. Пlapшен badge не прави тази разлика.
+      </p>
+      <div class="questions">
+        <div class="questions-label">Въпроси към дизайн и PM</div>
+        <ol>
+          <li>Трябва ли Failed да има severity levels (Failed — Warning / Failed — Critical) на база errors + usage?</li>
+          <li>Какво е SLA за Failed solution — Администраторът трябва ли да получи notification или е достатъчно да го види в таблицата?</li>
+          <li>Expand (›) на ред — какво се очаква да покаже? Logs, error details, deployment history?</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Summary -->
+  <hr class="divider" />
+  <div class="section">
+    <div class="section-label">Summary — Приоритети за дискусия</div>
+    <div class="summary-table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Тема</th>
+            <th>Засегнати Потребители</th>
+            <th>Приоритет</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Единица на token cost chart ("m") — дефиниция и reference point</td>
+            <td><span class="persona persona-admin">Admin</span><span class="persona persona-dev">Builder</span></td>
+            <td>🔴 Висок</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>None/Limited usage — action signal или само информация?</td>
+            <td><span class="persona persona-admin">Admin</span></td>
+            <td>🔴 Висок</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Failed severity levels — всички Failed изглеждат еднакво</td>
+            <td><span class="persona persona-admin">Admin</span></td>
+            <td>🔴 Висок</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Stat tiles без delta/trend — 651 грешки добро или лошо?</td>
+            <td><span class="persona persona-both">И двете</span></td>
+            <td>🟡 Среден</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Usage badge дефиниция — на каква метрика се базира?</td>
+            <td><span class="persona persona-admin">Admin</span><span class="persona persona-dev">Builder</span></td>
+            <td>🟡 Среден</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Default sort на таблицата — Solution Name vs Tokens/Errors</td>
+            <td><span class="persona persona-admin">Admin</span></td>
+            <td>🟢 Нисък</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Control Tower Design Review · Joule Studio UX · Diana Balkanska</span>
+    <span>31 август 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

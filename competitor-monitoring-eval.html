@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Builder Tools — Competitor Analysis</title>
+  <style>
+/* ── Tokens ── */
+:root {
+  --color-primary:          #6334FF;
+  --color-primary-deep:     #470CED;
+  --color-primary-light:    #E4D9FF;
+  --color-primary-lighter:  #F8F5FF;
+  --color-ink:              #1E1E1E;
+  --color-body:             #3F3F3F;
+  --color-muted:            #556B82;
+  --color-muted-soft:       #929292;
+  --color-canvas:           #FFFFFF;
+  --color-surface-soft:     #F5F6F8;
+  --color-surface-card:     #FFFFFF;
+  --color-surface-strong:   #F0F4F7;
+  --color-hairline:         #D5DCE3;
+  --color-hairline-soft:    #EBEBEB;
+  --color-border-strong:    #B8C4CE;
+  --color-success:          #1E7E34;
+  --color-success-bg:       #E6F4EA;
+  --color-warning:          #856404;
+  --color-warning-bg:       #FFF8E1;
+  --color-error:            #BB2020;
+  --color-error-bg:         #FDECEA;
+  --color-on-primary:       #FFFFFF;
+  --color-on-dark:          #FFFFFF;
+  --gradient-brand:         linear-gradient(135deg, #6334FF 0%, #8B2FC9 100%);
+  --font-family:            '72', '72full', Arial, Helvetica, sans-serif;
+  --fs-hero:       2.75rem; --fw-hero:       700; --lh-hero:       1.15;
+  --fs-display-xl: 2rem;    --fw-display-xl: 700; --lh-display-xl: 1.3;
+  --fs-display-lg: 1.5rem;  --fw-display-lg: 700; --lh-display-lg: 1.3;
+  --fs-display-md: 1.125rem;--fw-display-md: 700; --lh-display-md: 1.3;
+  --fs-display-sm: 1rem;    --fw-display-sm: 600; --lh-display-sm: 1.25;
+  --fs-body-md:    1rem;    --fw-body-md:    400; --lh-body-md:    1.5;
+  --fs-body-sm:    0.875rem;--fw-body-sm:    400; --lh-body-sm:    1.5;
+  --fs-caption:    0.75rem; --fw-caption:    700; --lh-caption:    1.33;
+  --fs-caption-sm: 0.6875rem;--fw-caption-sm:500; --lh-caption-sm: 1.27;
+  --fs-label-caps: 0.6875rem;--fw-label-caps:700; --ls-label-caps: 0.1em;
+  --fs-micro-tag:  0.625rem; --fw-micro-tag: 700; --ls-micro-tag:  0.12em;
+  --rounded-xs:    4px;
+  --rounded-sm:    8px;
+  --rounded-md:    12px;
+  --rounded-lg:    16px;
+  --rounded-full:  9999px;
+  --spacing-xxs:   2px;
+  --spacing-xs:    4px;
+  --spacing-sm:    8px;
+  --spacing-md:    12px;
+  --spacing-base:  16px;
+  --spacing-lg:    24px;
+  --spacing-xl:    32px;
+  --spacing-xxl:   40px;
+  --spacing-section: 48px;
+  --shadow-card:   0 0 0 1px rgba(34,53,72,0.08), 0 2px 8px rgba(34,53,72,0.06);
+  --layout-max:    1280px;
+  --layout-gutter: var(--spacing-xxl);
+  --duration-fast: 120ms;
+  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+}
+@font-face { font-family:"72"; font-weight:400; src:url("https://ui5.sap.com/resources/sap/ui/core/themes/sap_horizon/fonts/72-Regular.woff2") format("woff2"); }
+@font-face { font-family:"72"; font-weight:700; src:url("https://ui5.sap.com/resources/sap/ui/core/themes/sap_horizon/fonts/72-Bold.woff2") format("woff2"); }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--fs-body-md);font-weight:var(--fw-body-md);line-height:var(--lh-body-md);color:var(--color-ink);background-color:var(--color-surface-soft);}
+.layout-inner{max-width:var(--layout-max);margin:0 auto;padding-left:var(--layout-gutter);padding-right:var(--layout-gutter);width:100%;}
+.page{max-width:var(--layout-max);margin:0 auto;padding:var(--spacing-section) var(--layout-gutter);display:flex;flex-direction:column;gap:var(--spacing-section);}
+.top-nav{position:sticky;top:0;z-index:100;background:var(--color-canvas);border-bottom:1px solid var(--color-hairline);height:64px;}
+.top-nav .layout-inner{display:flex;align-items:center;height:100%;gap:var(--spacing-lg);}
+.top-nav__brand{display:flex;align-items:center;gap:var(--spacing-sm);flex-shrink:0;text-decoration:none;}
+.top-nav__brand-divider{width:1px;height:20px;background:var(--color-hairline);flex-shrink:0;}
+.top-nav__titles{display:flex;flex-direction:column;gap:1px;line-height:1.15;}
+.top-nav__org{font-size:var(--fs-caption-sm);font-weight:var(--fw-caption-sm);color:var(--color-muted);letter-spacing:0.01em;}
+.top-nav__product{font-size:var(--fs-display-sm);font-weight:var(--fw-display-sm);color:var(--color-ink);}
+.top-nav__tabs{display:flex;gap:0;flex:1;justify-content:center;}
+.nav-tab{display:flex;align-items:center;padding:0 var(--spacing-base);height:64px;font-size:var(--fs-display-sm);font-weight:var(--fw-display-sm);color:var(--color-muted);text-decoration:none;border-bottom:2px solid transparent;background:none;cursor:pointer;transition:color var(--duration-fast) var(--easing-default);}
+.nav-tab.active{color:var(--color-ink);border-bottom-color:var(--color-ink);}
+.nav-tab:hover:not(.active){color:var(--color-ink);}
+.page-header{background:var(--gradient-brand);padding:var(--spacing-section) 0;}
+.page-header__eyebrow{font-size:var(--fs-caption);font-weight:var(--fw-caption);letter-spacing:var(--ls-label-caps);text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:var(--spacing-sm);}
+.page-header__title{font-size:var(--fs-hero);font-weight:var(--fw-hero);line-height:var(--lh-hero);color:var(--color-on-dark);margin-bottom:var(--spacing-base);}
+.page-header__lead{font-size:var(--fs-body-md);line-height:var(--lh-body-md);color:rgba(255,255,255,0.85);max-width:60ch;}
+.page-header__meta{display:flex;gap:var(--spacing-xl);margin-top:var(--spacing-lg);flex-wrap:wrap;}
+.page-header__meta-item{display:flex;flex-direction:column;gap:2px;}
+.page-header__meta-label{font-size:var(--fs-micro-tag);font-weight:var(--fw-micro-tag);letter-spacing:var(--ls-micro-tag);text-transform:uppercase;color:rgba(255,255,255,0.45);}
+.page-header__meta-value{font-size:0.875rem;font-weight:500;color:rgba(255,255,255,0.9);}
+.section-header{margin-bottom:var(--spacing-lg);}
+.section-eyebrow{font-size:var(--fs-label-caps);font-weight:var(--fw-label-caps);letter-spacing:var(--ls-label-caps);text-transform:uppercase;color:var(--color-muted);margin-bottom:var(--spacing-xs);}
+.section-title{font-size:var(--fs-display-xl);font-weight:var(--fw-display-xl);line-height:var(--lh-display-xl);color:var(--color-ink);}
+.section-subtitle{font-size:var(--fs-body-sm);color:var(--color-muted);margin-top:var(--spacing-xs);}
+.body-text h2{font-size:var(--fs-display-lg);font-weight:var(--fw-display-lg);line-height:var(--lh-display-lg);color:var(--color-ink);margin-top:var(--spacing-section);margin-bottom:var(--spacing-base);}
+.body-text h2:first-child{margin-top:0;}
+.body-text h3{font-size:var(--fs-display-md);font-weight:var(--fw-display-md);color:var(--color-ink);margin-top:var(--spacing-xl);margin-bottom:var(--spacing-sm);}
+.body-text p{font-size:var(--fs-body-md);line-height:var(--lh-body-md);color:var(--color-body);margin-bottom:var(--spacing-lg);max-width:72ch;}
+.body-text p:last-child{margin-bottom:0;}
+.body-text ul,.body-text ol{font-size:var(--fs-body-md);line-height:var(--lh-body-md);color:var(--color-body);padding-left:var(--spacing-lg);margin-bottom:var(--spacing-lg);max-width:68ch;display:flex;flex-direction:column;gap:var(--spacing-sm);}
+.body-text strong{color:var(--color-ink);font-weight:600;}
+.body-text blockquote{border-left:3px solid var(--color-primary-light);background:var(--color-primary-lighter);padding:var(--spacing-base) var(--spacing-lg);border-radius:0 var(--rounded-sm) var(--rounded-sm) 0;margin:var(--spacing-xl) 0;font-size:var(--fs-body-md);line-height:var(--lh-body-md);color:var(--color-body);max-width:68ch;}
+.evidence-tag{display:inline-flex;align-items:center;border-radius:var(--rounded-full);padding:var(--spacing-xxs) var(--spacing-sm);font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;margin-left:4px;}
+.evidence-tag--fact{background:var(--color-success-bg);color:var(--color-success);}
+.evidence-tag--interpretation{background:var(--color-warning-bg);color:var(--color-warning);}
+.evidence-tag--gap{background:var(--color-surface-strong);color:var(--color-muted);}
+.badge{display:inline-flex;align-items:center;border-radius:var(--rounded-full);padding:var(--spacing-xxs) var(--spacing-sm);font-size:var(--fs-caption-sm);font-weight:600;white-space:nowrap;}
+.badge--success{background:var(--color-success-bg);color:var(--color-success);}
+.badge--warning{background:var(--color-warning-bg);color:var(--color-warning);}
+.badge--error{background:var(--color-error-bg);color:var(--color-error);}
+.badge--neutral{background:var(--color-surface-strong);color:var(--color-muted);}
+.badge--brand{background:var(--color-primary-light);color:var(--color-primary);}
+.card{background:var(--color-surface-card);border:1px solid var(--color-hairline);border-radius:var(--rounded-lg);padding:var(--spacing-lg);transition:box-shadow var(--duration-fast) var(--easing-default);}
+.card:hover{box-shadow:var(--shadow-card);}
+.card__label{font-size:var(--fs-label-caps);font-weight:var(--fw-label-caps);letter-spacing:var(--ls-label-caps);text-transform:uppercase;color:var(--color-muted);margin-bottom:var(--spacing-sm);}
+.card__title{font-size:var(--fs-display-md);font-weight:var(--fw-display-md);line-height:var(--lh-display-md);color:var(--color-ink);margin-bottom:var(--spacing-sm);}
+.card__body{font-size:var(--fs-body-sm);line-height:var(--lh-body-sm);color:var(--color-body);}
+.insight-card{background:var(--color-surface-soft);border-radius:var(--rounded-md);padding:var(--spacing-lg);}
+.insight-card__label{font-size:var(--fs-label-caps);font-weight:var(--fw-label-caps);letter-spacing:var(--ls-label-caps);text-transform:uppercase;color:var(--color-muted);margin-bottom:var(--spacing-sm);}
+.insight-card__value{font-size:var(--fs-display-xl);font-weight:var(--fw-display-xl);line-height:var(--lh-display-xl);color:var(--color-ink);}
+.insight-card__value--accent{color:var(--color-primary);}
+.insight-card__sub{font-size:var(--fs-body-sm);color:var(--color-muted);margin-top:var(--spacing-xs);}
+.table-card{background:var(--color-surface-card);border:1px solid var(--color-hairline);border-radius:var(--rounded-lg);overflow:hidden;}
+.table-card__header{padding:var(--spacing-lg);border-bottom:1px solid var(--color-hairline-soft);display:flex;align-items:center;justify-content:space-between;}
+.table-card__title{font-size:var(--fs-display-sm);font-weight:var(--fw-display-sm);color:var(--color-ink);}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:10px var(--spacing-base);font-size:var(--fs-label-caps);font-weight:var(--fw-label-caps);letter-spacing:var(--ls-label-caps);text-transform:uppercase;color:var(--color-muted);text-align:left;border-bottom:2px solid var(--color-hairline);background:var(--color-surface-strong);}
+.data-table td{padding:10px var(--spacing-base);font-size:var(--fs-body-sm);line-height:var(--lh-body-sm);color:var(--color-ink);border-bottom:1px solid var(--color-hairline-soft);}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--color-surface-soft);}
+.data-table td.check{text-align:center;font-size:1rem;}
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-base);}
+.swot-cell{border-radius:var(--rounded-md);padding:var(--spacing-lg);}
+.swot-cell--s{background:var(--color-success-bg);border-left:3px solid var(--color-success);}
+.swot-cell--w{background:var(--color-error-bg);border-left:3px solid var(--color-error);}
+.swot-cell--o{background:var(--color-primary-lighter);border-left:3px solid var(--color-primary);}
+.swot-cell--t{background:var(--color-warning-bg);border-left:3px solid var(--color-warning);}
+.swot-cell__heading{font-size:var(--fs-caption);font-weight:var(--fw-caption);letter-spacing:var(--ls-label-caps);text-transform:uppercase;color:var(--color-muted);margin-bottom:var(--spacing-sm);}
+.swot-cell ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:var(--spacing-sm);}
+.swot-cell li{font-size:var(--fs-body-sm);line-height:var(--lh-body-sm);color:var(--color-body);display:flex;align-items:baseline;gap:var(--spacing-sm);}
+.swot-cell li::before{content:"—";color:var(--color-muted-soft);flex-shrink:0;}
+.feature-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-base);}
+.feature-list__item{background:var(--color-surface-soft);border-radius:var(--rounded-md);padding:var(--spacing-lg);display:flex;flex-direction:column;gap:var(--spacing-xs);}
+.feature-list__title{font-size:var(--fs-display-sm);font-weight:var(--fw-display-sm);color:var(--color-ink);}
+.feature-list__desc{font-size:var(--fs-body-sm);line-height:var(--lh-body-sm);color:var(--color-muted);}
+.section-cols{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-xl);align-items:start;}
+.section-cols--3{grid-template-columns:repeat(3,1fr);}
+.section-cols--wide-left{grid-template-columns:2fr 1fr;}
+.analysis-section{display:grid;grid-template-columns:2fr 1fr;gap:var(--spacing-xl);align-items:start;}
+.analysis-sidebar{display:flex;flex-direction:column;gap:var(--spacing-base);}
+.teardown{background:var(--color-surface-card);border:1px solid var(--color-hairline);border-radius:var(--rounded-lg);overflow:hidden;margin-bottom:var(--spacing-lg);}
+.teardown__header{background:var(--gradient-brand);padding:var(--spacing-lg) var(--spacing-xl);}
+.teardown__name{font-size:var(--fs-display-lg);font-weight:var(--fw-display-lg);color:var(--color-on-dark);}
+.teardown__tagline{font-size:var(--fs-body-sm);color:rgba(255,255,255,0.75);margin-top:4px;}
+.teardown__body{padding:var(--spacing-xl);}
+.source-list{list-style:none;padding:0;border-top:1px solid var(--color-hairline-soft);}
+.source-list__item{padding:var(--spacing-base) 0;border-bottom:1px solid var(--color-hairline-soft);display:flex;flex-direction:column;gap:var(--spacing-xs);}
+.source-list__link{font-size:var(--fs-body-sm);font-weight:600;color:var(--color-primary);text-decoration:none;}
+.source-list__link:hover{text-decoration:underline;}
+.source-list__meta{font-size:var(--fs-caption-sm);color:var(--color-muted);}
+.footer{background:var(--gradient-brand);padding:var(--spacing-lg) 0;}
+.footer__inner{max-width:var(--layout-max);margin:0 auto;padding:0 var(--layout-gutter);display:flex;align-items:center;justify-content:space-between;}
+.footer__text{font-size:var(--fs-caption-sm);color:rgba(255,255,255,0.65);}
+@media(max-width:1024px){.analysis-section,.section-cols,.section-cols--wide-left{grid-template-columns:1fr;}.swot-grid{grid-template-columns:1fr;}.feature-list{grid-template-columns:1fr;}}
+@media(max-width:744px){:root{--layout-gutter:var(--spacing-base);}.page{padding:var(--spacing-xl) var(--spacing-base);gap:var(--spacing-xl);}.top-nav__tabs{display:none;}.page-header__title{font-size:2rem;}}
+
+    /* ── Joule sidebar ─────────────────────────────────────────────── */
+    .jl-sidebar{width:220px;min-height:100vh;background:#fff;border-right:1px solid #e8eaed;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:200;}
+    .jl-logo{padding:20px 18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e8eaed;}
+    .jl-logo-text{font-size:0.82rem;font-weight:700;color:#1d2733;line-height:1.2;}
+    .jl-sec{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#b0b5c0;padding:16px 18px 6px;}
+    .jl-sidebar nav{flex:1;padding:8px 0;overflow-y:auto;}
+    .jl-foot{padding:14px 18px;border-top:1px solid #e8eaed;font-size:0.65rem;color:#b0b5c0;line-height:1.5;}
+    .jl-sidebar a.sn{display:flex;align-items:center;gap:10px;padding:8px 18px;text-decoration:none;color:#4a5568;font-size:0.82rem;font-weight:500;transition:background 0.12s,color 0.12s;position:relative;}
+    .jl-sidebar a.sn:hover{background:#f5f3ff;color:#5b21b6;}
+    .jl-sidebar a.sn.act{background:#f0edfc;color:#5b21b6;font-weight:600;}
+    .jl-sidebar a.sn.act::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#6e4bdb;border-radius:0 2px 2px 0;}
+    .jl-sidebar a.sn.sub{padding-left:32px;font-size:0.78rem;color:#6b7280;}
+    .jl-sidebar a.sn.sub:hover{background:#f5f3ff;color:#5b21b6;}
+    .jl-div{height:1px;background:#f0f1f3;margin:6px 18px;}
+    body{margin-left:220px;}
+  </style>
+</head>
+<body>
+
+<aside class="jl-sidebar">
+  <div class="jl-logo">
+    <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="gem.png" style="width:32px;height:32px;object-fit:contain"></div>
+    <div><div class="jl-logo-text">Joule UX</div></div>
+  </div>
+  <nav>
+    <div class="jl-sec">Overview</div>
+    <a href="index.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">⊞</span> Dashboard</a>
+    <div class="jl-div"></div>
+    <div class="jl-sec">Теми</div>
+    <a href="joule-evaluations.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Agent Evaluations</a>
+    <a href="joule-evaluations-flow.html" class="sn sub"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Evaluations Flow</a>
+    <a href="joule-testing-eval-sync.html" class="sn sub"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Testing &amp; Eval Sync</a>
+    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> SWOT Analysis</a>
+    <a href="competitor-monitoring-eval.html" class="sn act"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Monitoring Research</a>
+    <a href="competitive-analysis.html" class="sn sub"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Competitive Analysis</a>
+    <div class="jl-div"></div>
+    <div class="jl-sec">Reference</div>
+    <a href="joule-studio-glossary.html" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">▸</span> Речник</a>
+    <a href="https://pages.github.tools.sap/I765278/joule-studio-h2-vision/" target="_blank" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">↗</span> Vision Prototype</a>
+    <a href="http://localhost:5173/" target="_blank" class="sn"><span style="font-size:1rem;width:20px;text-align:center;flex-shrink:0">↗</span> Monitoring Prototype</a>
+  </nav>
+  <div class="jl-foot">2026<br>Joule Studio UX Team</div>
+</aside>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="layout-inner">
+    <div class="top-nav__brand">
+      <div class="top-nav__titles">
+        <span class="top-nav__org">Platform Experience &amp; Design</span>
+        <span class="top-nav__product">Design Compare</span>
+      </div>
+    </div>
+    <div class="top-nav__brand-divider"></div>
+    <nav class="top-nav__tabs">
+      <a href="#introduction" class="nav-tab active">Intro</a>
+      <a href="#summary" class="nav-tab">Summary</a>
+      <a href="#tradeoffs" class="nav-tab">Tradeoffs</a>
+      <a href="#patterns" class="nav-tab">UI Patterns</a>
+      <a href="#tables" class="nav-tab">Tables</a>
+      <a href="#teardowns" class="nav-tab">Teardowns</a>
+      <a href="#workflows" class="nav-tab">Workflows</a>
+      <a href="#risks" class="nav-tab">Risks</a>
+      <a href="#monitoring" class="nav-tab">Monitoring</a>
+      <a href="#sources" class="nav-tab">Sources</a>
+    </nav>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="layout-inner">
+    <div class="page-header__eyebrow">Competitor Analysis</div>
+    <h1 class="page-header__title">Agent Builder Tools</h1>
+    <p class="page-header__lead">A UX comparison of five agent builder platforms across agent configuration, ease of use, and multi-agent support — to identify design patterns for product decisions.</p>
+    <div class="page-header__meta">
+      <div class="page-header__meta-item">
+        <span class="page-header__meta-label">Products compared</span>
+        <span class="page-header__meta-value">Langflow · n8n · Microsoft Copilot Studio · Vertex AI Agent Builder · Salesforce Agentforce</span>
+      </div>
+      <div class="page-header__meta-item">
+        <span class="page-header__meta-label">Research date</span>
+        <span class="page-header__meta-value">July 2026 · monitoring updated August 2026</span>
+      </div>
+      <div class="page-header__meta-item">
+        <span class="page-header__meta-label">Informing</span>
+        <span class="page-header__meta-value">Design patterns &amp; product decisions</span>
+      </div>
+      <div class="page-header__meta-item">
+        <span class="page-header__meta-label">Priorities</span>
+        <span class="page-header__meta-value">Agent config UX · Ease of use · Multi-agent support · Monitoring &amp; evaluation</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="page">
+
+  <!-- ── INTRODUCTION ── -->
+  <section id="introduction">
+    <div class="section-header">
+      <div class="section-eyebrow">How to read this report</div>
+      <h2 class="section-title">Introduction</h2>
+    </div>
+    <div class="body-text">
+      <p>This report compares five agent builder platforms — Langflow, n8n, Microsoft Copilot Studio, Vertex AI Agent Builder (Google), and Salesforce Agentforce — across three priorities: agent configuration UX, ease of use and learning curve, and multi-agent support. The goal is to surface design patterns that can inform product decisions.</p>
+      <p>Research was conducted in July 2026 using publicly accessible documentation, official product pages, GitHub READMEs, and published blog posts. Direct access to Salesforce Agentforce documentation was blocked during research; claims about that product are marked accordingly. No hands-on testing was performed — all UI descriptions are inferred from indirect sources.</p>
+      <h3>Evidence tags</h3>
+      <p>
+        Every substantive claim carries one of three tags:<br><br>
+        <span class="evidence-tag evidence-tag--fact">FACT</span> &nbsp;Published data with a working link or direct documentation quote.<br><br>
+        <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span> &nbsp;A pattern inferred from documentation, changelogs, or product descriptions.<br><br>
+        <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span> &nbsp;No public data found — would require direct access or user testing to verify.
+      </p>
+      <h3>Table of contents</h3>
+      <ul>
+        <li>Executive Summary — key findings and cross-product signals</li>
+        <li>Design Approach Tradeoffs — per design challenge, approaches with pros/cons</li>
+        <li>UI Pattern Analysis — per feature, platform-by-platform breakdown</li>
+        <li>Comparison Tables — side-by-side feature matrices</li>
+        <li>Teardowns by Product — SWOT per platform</li>
+        <li>Workflows Analysis — user journey per platform</li>
+        <li>Risk Analysis — design risks per platform</li>
+        <li>Sources &amp; Method Note</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── EXECUTIVE SUMMARY ── -->
+  <section id="summary">
+    <div class="section-header">
+      <div class="section-eyebrow">Key findings</div>
+      <h2 class="section-title">Executive Summary</h2>
+    </div>
+    <div class="analysis-section">
+      <div class="body-text">
+        <h3>Visual canvas is the dominant configuration paradigm — but execution varies widely</h3>
+        <p>Three of the five tools (Langflow, n8n, Copilot Studio) use a node-based visual canvas as the primary way to build agents. Google and Salesforce offer more form-based or natural language–driven configuration. The canvas approach scales well for complex flows but creates a steep learning curve for non-technical users. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></p>
+
+        <h3>Tool attachment is the universal agent primitive</h3>
+        <p>Across all five platforms, "giving an agent a tool" is the core design act — whether that's a sub-node in n8n, a connected component in Langflow, a Power Automate flow in Copilot Studio, or an Action in Agentforce. The UX pattern differs significantly but the underlying mental model is the same. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></p>
+
+        <h3>Multi-agent support is emerging, not mature</h3>
+        <p>All five platforms claim multi-agent support, but the depth differs sharply. Langflow has explicit multi-agent orchestration with conversation management. n8n achieves it by connecting multiple workflow instances. Copilot Studio supports agent-to-agent handoff via "connected agents." Google's Gemini Enterprise Agent Platform has a dedicated runtime layer. Agentforce multi-agent depth is unclear from public data. <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></p>
+
+        <h3>The open-source / enterprise divide shapes every UX decision</h3>
+        <p>Langflow and n8n prioritise developer control, component flexibility, and Python customisation. Copilot Studio, Vertex AI, and Agentforce prioritise governance, enterprise connectors, and non-developer accessibility. Neither approach is better — they serve different primary users. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></p>
+
+        <h3>Observability is the most consistent gap across all tools</h3>
+        <p>n8n explicitly surfaces execution logs with prompts, model responses, and subsequent actions. The others have limited public information about debugging and traceability UX. This is a significant design differentiator that is underserved across the category. <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></p>
+      </div>
+      <aside class="analysis-sidebar">
+        <div class="insight-card">
+          <div class="insight-card__label">Canvas-first tools</div>
+          <div class="insight-card__value insight-card__value--accent">3 of 5</div>
+          <div class="insight-card__sub">Langflow, n8n, Copilot Studio use node-based visual builders</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card__label">Core agent primitive</div>
+          <div class="insight-card__value insight-card__value--accent">Tool attach</div>
+          <div class="insight-card__sub">All 5 platforms share this as the fundamental act of agent configuration</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-card__label">Agentforce data coverage</div>
+          <div class="insight-card__value insight-card__value--accent">Thin</div>
+          <div class="insight-card__sub">Direct docs blocked during research — treat Agentforce claims as lower confidence</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ── DESIGN APPROACH TRADEOFFS ── -->
+  <section id="tradeoffs">
+    <div class="section-header">
+      <div class="section-eyebrow">Design decisions</div>
+      <h2 class="section-title">Design Approach Tradeoffs</h2>
+      <p class="section-subtitle">For each design challenge: approaches found across tools, with pros and cons for each.</p>
+    </div>
+
+    <!-- Challenge 1 -->
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Challenge 1</div>
+      <div class="card__title">How to represent agent configuration</div>
+      <div class="card__body">
+        <div class="section-cols" style="margin-top:var(--spacing-lg);">
+          <div>
+            <p><strong>Visual node canvas — Langflow, n8n</strong></p>
+            <p>Users build agents by placing and connecting typed nodes on a canvas. Each node represents a capability (LLM, tool, memory). The agent's logic is visible as a graph. <span class="evidence-tag evidence-tag--fact">FACT</span></p>
+            <ul>
+              <li>Pro: Makes data flow and dependencies explicit</li>
+              <li>Pro: Easy to swap components (e.g. change LLM provider)</li>
+              <li>Con: Becomes visually complex at scale ("node spaghetti")</li>
+              <li>Con: Steeper learning curve for non-technical users</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Form + natural language — Copilot Studio, Vertex AI Agent Builder</strong></p>
+            <p>Users describe the agent's purpose in plain language, then fill structured forms for topics, instructions, and connected tools. The underlying graph is hidden. <span class="evidence-tag evidence-tag--fact">FACT</span></p>
+            <ul>
+              <li>Pro: Lower barrier to entry for non-developers</li>
+              <li>Pro: Faster to get to a working agent</li>
+              <li>Con: Less visible control over execution flow</li>
+              <li>Con: Harder to debug when something goes wrong</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge 2 -->
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Challenge 2</div>
+      <div class="card__title">How to structure agent behaviour</div>
+      <div class="card__body">
+        <div class="section-cols" style="margin-top:var(--spacing-lg);">
+          <div>
+            <p><strong>Free-form system prompt — Langflow, n8n, Vertex AI</strong></p>
+            <p>Developers write a system prompt that governs the agent's behaviour. Full flexibility over instructions, persona, and constraints. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></p>
+            <ul>
+              <li>Pro: Maximum expressiveness</li>
+              <li>Pro: Familiar to developers</li>
+              <li>Con: No guardrails — bad prompts produce bad agents</li>
+              <li>Con: Hard to share or standardise across teams</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Topics &amp; Actions model — Copilot Studio, Agentforce</strong></p>
+            <p>Agent behaviour is decomposed into discrete "topics" (intents) and "actions" (what the agent can do). Each topic has its own conversation flow. <span class="evidence-tag evidence-tag--fact">FACT</span></p>
+            <ul>
+              <li>Pro: Structured, auditable, enterprise-friendly</li>
+              <li>Pro: Easier to hand off to non-technical admins</li>
+              <li>Con: More rigid — complex behaviours require many topics</li>
+              <li>Con: Abstraction can obscure what the agent actually does</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge 3 -->
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Challenge 3</div>
+      <div class="card__title">How to support multi-agent workflows</div>
+      <div class="card__body">
+        <div class="section-cols" style="margin-top:var(--spacing-lg);">
+          <div>
+            <p><strong>Orchestration as a first-class primitive — Langflow, Vertex AI</strong></p>
+            <p>Platforms provide dedicated orchestration constructs: Langflow has a multi-agent mode with conversation management; Vertex AI's Gemini Enterprise Agent Platform includes a managed runtime layer for agent coordination. <span class="evidence-tag evidence-tag--fact">FACT</span></p>
+            <ul>
+              <li>Pro: Purpose-built — designed for complexity</li>
+              <li>Pro: State and memory managed by the platform</li>
+              <li>Con: Adds conceptual overhead for simple use cases</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Workflow-level composition — n8n, Copilot Studio</strong></p>
+            <p>Multi-agent is achieved by connecting or chaining separate workflows/agents. n8n connects workflow instances; Copilot Studio routes between connected agents. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></p>
+            <ul>
+              <li>Pro: Reuses familiar building blocks</li>
+              <li>Pro: Flexible — any agent can be a sub-agent</li>
+              <li>Con: State passing between agents requires manual wiring</li>
+              <li>Con: Harder to reason about global agent behaviour</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── UI PATTERN ANALYSIS ── -->
+  <section id="patterns">
+    <div class="section-header">
+      <div class="section-eyebrow">UI patterns</div>
+      <h2 class="section-title">UI Pattern Analysis</h2>
+      <p class="section-subtitle">Four patterns compared across all five tools. Each table is followed by a design insight.</p>
+    </div>
+
+    <!-- Pattern 1: Entry point -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 1 — Agent creation entry point</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">How does a user start building their first agent?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Entry point</th>
+            <th>UI approach</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Template gallery or blank canvas</td>
+            <td>"Simple Agent" template provides an LLM node, tool node, and playground panel ready to run. Component sidebar lists all available nodes.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>New workflow → add AI Agent node</td>
+            <td>Agent node appears on canvas with visible empty attachment slots for tool, memory, and chat model — missing pieces are shown immediately.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Natural language description on home screen</td>
+            <td>Platform auto-generates starter topics and knowledge sources. Guided setup walks through instructions, knowledge sources, and channels.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Agent Studio via Google Cloud Console</td>
+            <td>Dual-pane canvas: visual designer on one side, code/config editor on the other. System instructions can be auto-generated or written manually.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Agent Builder inside Salesforce platform</td>
+            <td>Users select a pre-defined agent type (Service, Sales, etc.) and configure topics and actions. Full entry point details not accessible.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Design insight: The NL entry point (Copilot Studio) removes the blank-canvas problem but risks overpromising — the generated agent may not match the user's mental model. Template galleries (Langflow) and explicit empty slots (n8n) offer better progressive disclosure by showing what an agent is made of from the very first interaction.</blockquote>
+      </div>
+    </div>
+
+    <!-- Pattern 2: Tool attachment -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 2 — Tool / capability attachment</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">How do users discover, attach, and configure tools?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Discovery mechanism</th>
+            <th>Attachment UX</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Component sidebar, categorised by type</td>
+            <td>Drag tool node onto canvas, connect to agent node. Parameters configured in inline panel. Python tools writable directly in UI.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Click empty tool slot → filtered node picker</td>
+            <td>Tools attach as sub-nodes via dedicated input ports. 500+ integrations available. Agent cannot run without at least one tool connected.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Connector gallery (Power Platform, M365)</td>
+            <td>Tools added as "Actions" within a topic. Form-based, not visual. Custom connectors via Power Automate flows.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Config panel inside Agent Studio</td>
+            <td>Tool types: Google Search, RAG Engine, enterprise APIs, custom functions. Schemas defined via structured forms or JSON.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Actions library inside Agent Builder</td>
+            <td>Actions map to Salesforce flows, APIs, or Apex code. Discovery and attachment UX details not accessible.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Design insight: The "slot with empty state" pattern in n8n — the agent node visually shows it needs at least one tool — is the strongest affordance for explaining agent composition. It makes the dependency explicit before the user runs the agent, preventing the silent failure of an agent with no tools attached.</blockquote>
+      </div>
+    </div>
+
+    <!-- Pattern 3: Memory configuration -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 3 — Memory configuration</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">How do users configure memory type and scope?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Memory model</th>
+            <th>Configuration UX</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Explicit node — swappable backend (in-memory, vector DB)</td>
+            <td>Connect a memory node to the agent node. Scope and retrieval strategy configurable per node. Stateless if no memory node is connected.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Explicit sub-node — Window Buffer Memory</td>
+            <td>Memory attaches to agent node like a tool. If no memory sub-node is connected, the agent is stateless by design.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Implicit — managed within topic flow</td>
+            <td>Variables store user data across conversation turns. Long-term cross-session memory not documented as a first-class feature.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Managed infrastructure — Sessions &amp; Memory Bank</td>
+            <td>Platform service maintains conversation state and long-term preferences. Not a UI-configurable node — managed automatically.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Unknown</td>
+            <td>Memory and context management details not accessible during research.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Design insight: Explicit memory nodes (Langflow, n8n) give developers transparency and control — they can see and swap what the agent remembers. Managed memory (Vertex AI) reduces friction for non-developers but hides a critical behaviour. The right pattern depends on primary user type; the design challenge is surfacing memory behaviour without requiring users to understand infrastructure.</blockquote>
+      </div>
+    </div>
+
+    <!-- Pattern 4: Testing & playground -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 4 — Testing and playground</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">How do users test an agent during and after configuration?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Testing surface</th>
+            <th>Observability depth</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Built-in Playground, inline with canvas</td>
+            <td>Step-by-step reasoning trace: shows which tool was selected and why. Updates in real-time as flow is modified.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Execution logs per node run</td>
+            <td>Each node shows its input/output after a run. Prompts, model responses, and subsequent actions are all visible. Human approval gates can pause execution for review.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Test chat panel inside authoring UI</td>
+            <td>Real-time conversation with agent. Shows which topic was triggered. Limited insight into LLM reasoning.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Side-by-side prompt comparison + minimap</td>
+            <td>Prompt tuning and safety filter testing inline. Adjustable thinking levels. Evaluation &amp; Monitoring service for post-deployment quality.</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Unknown</td>
+            <td>Testing UX details not accessible during research.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Design insight: Langflow's step-by-step reasoning trace — "the agent chose Tool X because Y" — is the most transparent testing pattern found. It closes the gap between configuration and behaviour. n8n's per-node execution logs are the strongest observability pattern for debugging. Both approaches are underused across the category and represent a significant design opportunity.</blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMPARISON TABLES ── -->
+  <section id="tables">
+    <div class="section-header">
+      <div class="section-eyebrow">Side-by-side</div>
+      <h2 class="section-title">Comparison Tables</h2>
+    </div>
+
+    <!-- Table 1: Agent configuration -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Agent configuration UX</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Langflow</th>
+            <th>n8n</th>
+            <th>Copilot Studio</th>
+            <th>Vertex AI</th>
+            <th>Agentforce</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>UI paradigm</td>
+            <td>Visual canvas <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Visual canvas <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Form + NL guided <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Dual-pane canvas + code <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Form-based <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>Behaviour model</td>
+            <td>System prompt + tool nodes</td>
+            <td>System prompt + sub-nodes</td>
+            <td>Topics &amp; Actions</td>
+            <td>System instructions + tools</td>
+            <td>Topics &amp; Actions</td>
+          </tr>
+          <tr>
+            <td>Primary user</td>
+            <td>Developer <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Developer / power user <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Business user / admin <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Developer / ML engineer <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Salesforce admin <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td>Custom code support</td>
+            <td>Python inline <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>JavaScript / Python nodes <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Via Power Automate <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Full SDK access <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Apex code <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td>LLM choice</td>
+            <td>All major LLMs <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>All major LLMs <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Azure OpenAI (primary) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Gemini (primary) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Einstein AI (primary) <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table 2: Multi-agent -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Multi-agent support</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Langflow</th>
+            <th>n8n</th>
+            <th>Copilot Studio</th>
+            <th>Vertex AI</th>
+            <th>Agentforce</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Multi-agent approach</td>
+            <td>Native orchestration mode <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Connected workflow instances <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Connected agents / handoff <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Managed agent runtime <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Unknown <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>State management</td>
+            <td>Conversation management built-in <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Manual wiring between workflows <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Variable passing between agents <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Sessions &amp; Memory Bank service <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Unknown <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>Specialised agent roles</td>
+            <td>Fleet of agents with shared tools <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Per-workflow specialisation <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Agent routing by topic <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+            <td>Dedicated orchestration layer <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Unknown <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>MCP support</td>
+            <td>Export as MCP server <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>MCP node (consume &amp; expose) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Not documented <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td>Not documented <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td>Not documented <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table 3: Ease of use -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Ease of use &amp; learning curve</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Langflow</th>
+            <th>n8n</th>
+            <th>Copilot Studio</th>
+            <th>Vertex AI</th>
+            <th>Agentforce</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>No-code entry point</td>
+            <td class="check">⚠️</td>
+            <td class="check">⚠️</td>
+            <td class="check">✅</td>
+            <td class="check">⚠️</td>
+            <td class="check">✅</td>
+          </tr>
+          <tr>
+            <td>Template / starter library</td>
+            <td>Hundreds of pre-built flows <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Template gallery available <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>AI-generated starter topics <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Not documented <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td>Agent type selection <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td>Interactive testing</td>
+            <td>Playground with step trace <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Execution logs per node <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Test chat panel <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Side-by-side comparison <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Unknown <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>Desktop app (no setup)</td>
+            <td>Langflow Desktop <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Web + self-hosted <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Web app <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Cloud console <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Salesforce platform <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── TEARDOWNS ── -->
+  <section id="teardowns">
+    <div class="section-header">
+      <div class="section-eyebrow">Per-product analysis</div>
+      <h2 class="section-title">Teardowns by Product</h2>
+    </div>
+
+    <!-- Langflow -->
+    <div class="teardown">
+      <div class="teardown__header">
+        <div class="teardown__name">Langflow</div>
+        <div class="teardown__tagline">Open-source visual agent builder for developers — batteries included, Python-extensible</div>
+      </div>
+      <div class="teardown__body">
+        <div class="swot-grid">
+          <div class="swot-cell swot-cell--s">
+            <div class="swot-cell__heading">Strengths</div>
+            <ul>
+              <li>Playground shows agent reasoning step-by-step — strongest transparency pattern in the category <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Hundreds of pre-built flows and components reduce blank-canvas friction <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Exports agents as APIs and MCP servers — bridges development and deployment <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--w">
+            <div class="swot-cell__heading">Weaknesses</div>
+            <ul>
+              <li>Visual canvas complexity increases rapidly with agent size — "node spaghetti" risk <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>No native enterprise governance, SSO, or audit trail in open-source version <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Multi-agent composition UX details are thin in public documentation <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--o">
+            <div class="swot-cell__heading">Opportunities</div>
+            <ul>
+              <li>MCP server export positions Langflow as a backend for other AI tools <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Desktop app lowers setup barrier — could capture non-developer users who want visual building</li>
+              <li>Python customisation hook is a strong developer retention pattern</li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--t">
+            <div class="swot-cell__heading">Threats</div>
+            <ul>
+              <li>n8n offers similar visual canvas with stronger observability patterns <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Enterprise buyers will choose Copilot Studio or Agentforce for governance <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Rapidly evolving LLM ecosystem may outpace component library maintenance <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- n8n -->
+    <div class="teardown">
+      <div class="teardown__header">
+        <div class="teardown__name">n8n</div>
+        <div class="teardown__tagline">Workflow automation platform with first-class AI agent nodes and 500+ integrations</div>
+      </div>
+      <div class="teardown__body">
+        <div class="swot-grid">
+          <div class="swot-cell swot-cell--s">
+            <div class="swot-cell__heading">Strengths</div>
+            <ul>
+              <li>Execution logs show every prompt, model response, and action — strongest observability in the set <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>500+ integration connectors available as agent tools without custom code <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Human-in-the-loop approval gates are a first-class design pattern <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--w">
+            <div class="swot-cell__heading">Weaknesses</div>
+            <ul>
+              <li>Multi-agent requires connecting separate workflow instances — no native orchestration primitive <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Primary mental model is "workflow automation", which may confuse users building AI-first agents <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Memory types appear limited in documentation (Window Buffer only referenced) <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--o">
+            <div class="swot-cell__heading">Opportunities</div>
+            <ul>
+              <li>MCP node (consume and expose) makes n8n interoperable with the broader AI ecosystem <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Human approval gate pattern is underused across the category — strong differentiator</li>
+              <li>Existing automation user base provides a large pool of potential agent builders</li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--t">
+            <div class="swot-cell__heading">Threats</div>
+            <ul>
+              <li>Automation-first positioning may lose pure agent use cases to dedicated tools <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Zapier and Make could close the AI agent gap for non-technical users <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Agent orchestration as a standalone category may require a dedicated product rethink <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copilot Studio -->
+    <div class="teardown">
+      <div class="teardown__header">
+        <div class="teardown__name">Microsoft Copilot Studio</div>
+        <div class="teardown__tagline">Low-code agent builder for business users, natively integrated with Microsoft 365 and Azure</div>
+      </div>
+      <div class="teardown__body">
+        <div class="swot-grid">
+          <div class="swot-cell swot-cell--s">
+            <div class="swot-cell__heading">Strengths</div>
+            <ul>
+              <li>Natural language agent creation removes blank-canvas barrier for non-developers <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Topics &amp; Actions model maps well to enterprise governance and auditing needs <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Native Microsoft 365 / Azure integration reduces connector setup friction for enterprise <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--w">
+            <div class="swot-cell__heading">Weaknesses</div>
+            <ul>
+              <li>LLM choice limited to Azure OpenAI — no multi-provider flexibility <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Topics model becomes unwieldy for highly dynamic or open-ended agent behaviour <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Long-term memory across sessions not clearly documented as a feature <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--o">
+            <div class="swot-cell__heading">Opportunities</div>
+            <ul>
+              <li>M365 Copilot extension surface gives agents a massive built-in distribution channel <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>"Agent flows" (new workflow format) could close the gap with developer-grade tools <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Enterprise admin market is large and underserved by open-source alternatives</li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--t">
+            <div class="swot-cell__heading">Threats</div>
+            <ul>
+              <li>Abstraction ceiling — power users will hit limits and move to lower-level tools <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>OpenAI's own agent products could disintermediate the Azure OpenAI dependency <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Copilot brand dilution across Microsoft products risks confusion about capabilities <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vertex AI -->
+    <div class="teardown">
+      <div class="teardown__header">
+        <div class="teardown__name">Vertex AI Agent Builder</div>
+        <div class="teardown__tagline">Google Cloud's enterprise agent platform with managed runtime, grounding, and multi-agent orchestration</div>
+      </div>
+      <div class="teardown__body">
+        <div class="swot-grid">
+          <div class="swot-cell swot-cell--s">
+            <div class="swot-cell__heading">Strengths</div>
+            <ul>
+              <li>Sessions &amp; Memory Bank provides managed long-term memory as infrastructure — no manual wiring <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Google Search and Maps grounding gives agents access to real-world, up-to-date data <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+              <li>Serverless managed runtime removes infrastructure management from agent deployment <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--w">
+            <div class="swot-cell__heading">Weaknesses</div>
+            <ul>
+              <li>Dual-pane canvas + code editor raises the skill floor — not accessible to non-developers <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Tightly coupled to Google Cloud — high switching cost for non-GCP users <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Template and starter library coverage unclear from public documentation <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--o">
+            <div class="swot-cell__heading">Opportunities</div>
+            <ul>
+              <li>Gemini model advancements (reasoning, multimodality) feed directly into agent capabilities <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Enterprise data grounding via RAG Engine is a strong differentiator over open-source tools</li>
+              <li>Agent evaluation and monitoring service addresses the observability gap category-wide</li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--t">
+            <div class="swot-cell__heading">Threats</div>
+            <ul>
+              <li>AWS Bedrock Agents and Azure Copilot Studio compete directly in the enterprise cloud segment <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Open-source orchestration frameworks (LangGraph, CrewAI) offer comparable multi-agent with no cloud lock-in <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Rebranding ("Gemini Enterprise Agent Platform") may confuse buyers mid-evaluation <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agentforce -->
+    <div class="teardown">
+      <div class="teardown__header">
+        <div class="teardown__name">Salesforce Agentforce</div>
+        <div class="teardown__tagline">CRM-native agent builder for Salesforce admins — agents that act within the Salesforce data model</div>
+      </div>
+      <div class="teardown__body">
+        <div class="swot-grid">
+          <div class="swot-cell swot-cell--s">
+            <div class="swot-cell__heading">Strengths</div>
+            <ul>
+              <li>Deep integration with Salesforce CRM data, flows, and Apex — agents operate on trusted business data <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Topics &amp; Actions model aligns with Salesforce admin mental models — lower adoption friction within existing user base <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Purpose-built agent types (Service, Sales) encode domain best practices out of the box <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--w">
+            <div class="swot-cell__heading">Weaknesses</div>
+            <ul>
+              <li>Tightly scoped to Salesforce ecosystem — agents cannot easily access non-Salesforce data or tools <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Public documentation largely inaccessible — research coverage is significantly thinner than other tools <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+              <li>Einstein AI as primary LLM limits model choice compared to open-source alternatives <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--o">
+            <div class="swot-cell__heading">Opportunities</div>
+            <ul>
+              <li>150,000+ Salesforce customers as a built-in distribution channel for agent adoption <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>Regulated industries (finance, healthcare) need the compliance and governance Salesforce can provide</li>
+              <li>Agentic CRM is an emerging category — Agentforce is currently the defining product</li>
+            </ul>
+          </div>
+          <div class="swot-cell swot-cell--t">
+            <div class="swot-cell__heading">Threats</div>
+            <ul>
+              <li>Microsoft Copilot + Dynamics 365 competes directly with CRM-native agents for enterprise buyers <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>If Salesforce data moat weakens, Agentforce loses its primary differentiator <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+              <li>High cost of Salesforce platform may push SMBs toward open-source alternatives <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WORKFLOWS ANALYSIS ── -->
+  <section id="workflows">
+    <div class="section-header">
+      <div class="section-eyebrow">User journeys</div>
+      <h2 class="section-title">Workflows Analysis</h2>
+      <p class="section-subtitle">Steps to build and deploy a first agent on each platform, tagged by evidence level.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Langflow</div>
+      <div class="card__title">Build and deploy a first agent</div>
+      <div class="card__body body-text">
+        <ol>
+          <li>Open Langflow Desktop or launch from CLI — no account required for local use <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Select "Simple Agent" from the template gallery <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Replace the default LLM node with your preferred provider (drag from sidebar) <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Add tool nodes from the component library; connect to the agent node <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Test in the Playground — observe step-by-step reasoning trace <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Export as an API endpoint or MCP server for integration <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">n8n</div>
+      <div class="card__title">Build and deploy a first agent</div>
+      <div class="card__body body-text">
+        <ol>
+          <li>Create a new workflow from the dashboard <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Add an AI Agent node from the node picker — empty tool/memory slots are shown immediately <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Attach a chat model sub-node (e.g. OpenAI); configure API key <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Attach one or more tool sub-nodes from the 500+ integration library <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Optionally attach a memory sub-node for conversation history <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Run and inspect execution logs — each node shows its input/output <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Add a webhook or chat trigger to make the agent accessible externally <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Microsoft Copilot Studio</div>
+      <div class="card__title">Build and deploy a first agent</div>
+      <div class="card__body body-text">
+        <ol>
+          <li>Go to copilotstudio.microsoft.com — log in with Microsoft account <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Describe the agent in plain language on the home screen <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Platform auto-generates starter topics and suggested knowledge sources <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Review and edit topics in the topic editor; add custom conversation nodes <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Add Actions (tools) via Power Automate connector gallery <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Test in the built-in chat panel — see which topic was triggered <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Publish to Teams, web, or other channels from the Publish panel <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Vertex AI Agent Builder</div>
+      <div class="card__title">Build and deploy a first agent</div>
+      <div class="card__body body-text">
+        <ol>
+          <li>Access Agent Studio from Google Cloud Console — GCP project required <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Create a new agent; write or auto-generate system instructions <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Configure grounding sources (Google Search, RAG Engine, enterprise data) <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Add tools via structured form or JSON schema definition <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Test with side-by-side prompt comparison and adjustable thinking levels <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Deploy to Agent Runtime — serverless, managed infrastructure <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+          <li>Monitor via the Evaluation &amp; Monitoring service <span class="evidence-tag evidence-tag--fact">FACT</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:var(--spacing-base);">
+      <div class="card__label">Salesforce Agentforce</div>
+      <div class="card__title">Build and deploy a first agent</div>
+      <div class="card__body body-text">
+        <ol>
+          <li>Access Agent Builder from the Salesforce platform — Salesforce org required <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+          <li>Select an agent type (Service Agent, Sales Agent, etc.) <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+          <li>Define topics — discrete areas of agent responsibility <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+          <li>Attach Actions to each topic — map to Salesforce flows, APIs, or Apex <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></li>
+          <li>Test and deploy within the Salesforce environment <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RISK ANALYSIS ── -->
+  <section id="risks">
+    <div class="section-header">
+      <div class="section-eyebrow">Design risks</div>
+      <h2 class="section-title">Risk Analysis</h2>
+      <p class="section-subtitle">Design-specific risks per product inferred from public signals.</p>
+    </div>
+    <div class="table-card">
+      <div class="table-card__header">
+        <span class="table-card__title">Design risks by product</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Risk type</th>
+            <th>Signal</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Complexity</td>
+            <td>Visual canvas scales poorly — large flows become unreadable ("node spaghetti"). No documented layout management or grouping primitives.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Consistency</td>
+            <td>Python extensibility allows arbitrary customisation — components built by different users may behave inconsistently within the same flow.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Complexity</td>
+            <td>Multi-agent requires manually wiring workflows together. Cross-workflow state passing has no managed solution — prone to broken references.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Accessibility</td>
+            <td>No documented accessibility audit for the workflow canvas. Keyboard navigation and screen reader support for node-based UIs is a known challenge in the category.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Debt</td>
+            <td>Topics model creates maintenance debt at scale — each new intent requires a new topic, leading to a large, difficult-to-manage topic library for complex agents.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Consistency</td>
+            <td>AI-generated starter topics may not match user intent — "naturalness" of NL entry point creates a false confidence that can lead to misconfigured agents.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Accessibility</td>
+            <td>Dual-pane canvas + code editor raises the skill floor significantly. Non-developers cannot self-serve without training or support.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Consistency</td>
+            <td>Platform rebranding from "Vertex AI Agent Builder" to "Gemini Enterprise Agent Platform" mid-market may cause documentation drift and inconsistent user mental models.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Complexity</td>
+            <td>Tight coupling to Salesforce data model means agent behaviour is hard to reason about without deep Salesforce knowledge.</td>
+            <td><span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Debt</td>
+            <td>Limited public documentation makes it difficult to assess long-term maintainability. Thin research coverage is itself a risk signal.</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── MONITORING & EVALUATION ── -->
+  <section id="monitoring">
+    <div class="section-header">
+      <div class="section-eyebrow">Post-deployment visibility</div>
+      <h2 class="section-title">Monitoring &amp; Evaluation</h2>
+      <p class="section-subtitle">Research updated August 2026. Full coverage: Copilot Studio, Vertex AI, Agentforce. Evidence gaps: n8n, Langflow.</p>
+    </div>
+
+    <div class="body-text" style="margin-bottom:var(--spacing-xl);">
+      <p>All three enterprise tools have invested significantly in monitoring and evaluation in 2025–2026. The category has moved from "observability as an afterthought" to dedicated monitoring surfaces, automated scoring pipelines, and — in Vertex AI's case — continuous evaluation against live production traffic. Open-source tools (n8n, Langflow) retain strong <em>development-time</em> observability (step traces, execution logs) but have no confirmed post-deployment analytics surface. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></p>
+    </div>
+
+    <!-- Pattern 5: Monitoring surface architecture -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 5 — Monitoring surface architecture</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">Where do builders and operators go to understand agent behaviour in production?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Primary surface(s)</th>
+            <th>Real-time view</th>
+            <th>Async / aggregate view</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Playground (dev only)</td>
+            <td>Step-by-step reasoning during test run</td>
+            <td>No post-deployment surface confirmed</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Canvas execution logs</td>
+            <td>Per-node input/output after each run</td>
+            <td>No post-deployment analytics confirmed</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Monitor tab (single unified surface)</td>
+            <td>Transcripts — last 28 days, CSV download</td>
+            <td>AI summary bullets, KPIs, Effectiveness, Use, Custom metrics — 360-day retention</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>Cloud Trace + Cloud Logging + Cloud Monitoring (3 GCP tools)</td>
+            <td>Cloud Trace: per-request spans with user feedback events</td>
+            <td>Dialogflow CX: Conversation Outcomes, Intent Escalations, Flow Analysis, Webhook Errors</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>3 surfaces: Agent Analytics + Sessions &amp; Intents + Omni Supervisor</td>
+            <td>Omni Supervisor: live conversation view with transfer-to-rep button</td>
+            <td>Agent Analytics (KPIs, trend cards) + Sessions &amp; Intents (per-intent traces, quality scores)</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Design insight: Copilot Studio achieves the most unified monitoring UX — one tab, all signals, 360-day retention. Agentforce is functionally complete but most fragmented: three separate surfaces for live supervision, async analysis, and session traces, each with a different entry point and audience. Vertex AI offloads monitoring to GCP infrastructure — powerful but requires GCP expertise and console-switching. Open-source tools have zero post-deployment visibility confirmed — a significant gap for production use cases. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></blockquote>
+      </div>
+    </div>
+
+    <!-- Pattern 6: Evaluation / testing -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 6 — Structured evaluation and testing</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">How do builders run repeatable quality tests against their agents?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Test surface</th>
+            <th>Test set size</th>
+            <th>Test data sources</th>
+            <th>Version comparison</th>
+            <th>CI/CD integration</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Langflow</strong></td>
+            <td>Playground only</td>
+            <td>Ad hoc</td>
+            <td>Manual</td>
+            <td>No</td>
+            <td>No</td>
+            <td><span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td>Execution logs + AI Builder verify (v2.33)</td>
+            <td>Ad hoc</td>
+            <td>Manual</td>
+            <td>No</td>
+            <td>No</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copilot Studio</strong></td>
+            <td>Evaluate tab</td>
+            <td>Up to 100 cases</td>
+            <td>AI auto-gen, knowledge source, CSV, test chat session, Themes real-user questions</td>
+            <td>Yes — arrow indicators per case (pass↑ / fail↓)</td>
+            <td>Via Power Platform REST API / Power Automate</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vertex AI</strong></td>
+            <td>ADK eval framework + Agent Engine offline eval</td>
+            <td>Unlimited (test files + evalsets)</td>
+            <td>Manual, CSV, pytest, CLI, <code>adk conformance test</code></td>
+            <td>Yes — AutoSxS head-to-head judge pipeline</td>
+            <td>Yes — pytest integration + <code>adk eval</code> CLI</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce</strong></td>
+            <td>Agentforce Testing Center (Beta in Studio)</td>
+            <td>Batch (scale not documented)</td>
+            <td>AI gen from subagents/knowledge, CSV, Agentforce Data Library</td>
+            <td>Not confirmed</td>
+            <td>Yes — Testing Center API</td>
+            <td><span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Design insight: Copilot Studio's version comparison — showing which test cases improved or regressed between two runs — is the most actionable evaluation UX for non-developer users. Vertex AI's AutoSxS offers deeper statistical comparison (judge-model adjudicated) but requires SDK fluency. Agentforce Testing Center has a critical design gap: scorers created in testing do not fire in live production sessions — meaning test pass rate and live quality score are not comparable. <span class="evidence-tag evidence-tag--fact">FACT</span></blockquote>
+      </div>
+    </div>
+
+    <!-- Scoring methods comparison -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Evaluation scoring methods — enterprise tools compared</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Copilot Studio</th>
+            <th>Vertex AI (ADK)</th>
+            <th>Agentforce</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Semantic / meaning match</td>
+            <td>Compare meaning — LLM-judged, configurable threshold <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td><code>final_response_match_v2</code> — LLM-judged semantic equivalence <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Response accuracy scorer <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>General quality (rubric)</td>
+            <td>General quality — relevance, groundedness, completeness, abstention (0–100%) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td><code>rubric_based_*</code> variants; custom rubrics supported <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Response Quality Score (standard scorer, 1–5) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Tool / action use</td>
+            <td>Tool use — did agent call expected tools/topics? <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td><code>tool_trajectory_avg_score</code> — exact call-sequence match <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Subagent recognition + action execution <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Keyword / exact match</td>
+            <td>Keyword match + Exact match (both available) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td><code>response_match_score</code> (ROUGE-1) + exact match <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Not documented <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>Hallucination / safety</td>
+            <td>Groundedness included in General quality <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td><code>hallucinations_v1</code> + <code>safety_v1</code> as separate metrics <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Not documented <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>Custom / user-defined</td>
+            <td>Custom method with user-defined labels + instructions <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Custom rubric variants <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Custom Scorers — API GA, UI Beta (Summer '26) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Latency</td>
+            <td>Response time per case (Evaluate tab — informational only) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Not documented in eval metrics <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td>Agent Response Latency (ms) added Summer '26 <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Continuous production eval</td>
+            <td>Not available — Evaluate tab is pre-deployment only <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Online Monitors — continuous automated scoring against live traffic <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td>Live Sessions &amp; Intents scoring pipeline (always-on as of Aug 2026) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pattern 7: Production metrics -->
+    <div class="table-card" style="margin-bottom:var(--spacing-base);">
+      <div class="table-card__header">
+        <span class="table-card__title">Pattern 7 — Production metrics tracked</span>
+        <span style="font-size:var(--fs-body-sm);color:var(--color-muted);">Which outcome and quality signals are surfaced in the analytics layer?</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Copilot Studio</th>
+            <th>Vertex AI</th>
+            <th>Agentforce</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Resolution / deflection</td>
+            <td class="check">✅ Resolved (confirmed + implied) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">⚠️ Dialogflow CX only <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Deflection rate <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Escalation rate</td>
+            <td class="check">✅ 3 subtypes tracked <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Intent Escalations view <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Escalation rate tracked <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Abandonment rate</td>
+            <td class="check">✅ Session outcome type <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ In Dialogflow CX analytics <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Tracked (2hr default timeout) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>User satisfaction / CSAT</td>
+            <td class="check">✅ CSAT 1–5 from end-of-session survey <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">⚠️ Qualitative feedback only (Feedback Service) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">⚠️ Binary thumbs — no numeric CSAT <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Sentiment analysis (AI)</td>
+            <td class="check">✅ AI-analyzed per session (preview) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">❌ Not confirmed <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td class="check">❌ Not confirmed <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+          <tr>
+            <td>Tool / knowledge source use</td>
+            <td class="check">✅ Top 5 tools + sources with quality/error rates <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Webhook errors in Dialogflow; tool spans in Cloud Trace <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Per-intent trace shows triggered actions <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Latency / response time</td>
+            <td class="check">⚠️ Evaluate tab only — not in live Monitor <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Cloud Trace per-request spans <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Agent Response Latency (ms) — Summer '26 <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>AI-clustered themes / topic patterns</td>
+            <td class="check">✅ Themes — AI clusters user questions weekly (preview) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">❌ Not confirmed <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td class="check">⚠️ Intent Summary per session only (no cross-session clustering) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>Error type diagnostics</td>
+            <td class="check">❌ No dedicated error type breakdown <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Failure Cluster analysis groups systematic failures <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">✅ Error status + type (system/API/agent logic) — Summer '26 <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+          </tr>
+          <tr>
+            <td>ROI / business value calculator</td>
+            <td class="check">✅ Savings calculator (maker-entered cost × session count) <span class="evidence-tag evidence-tag--fact">FACT</span></td>
+            <td class="check">❌ Not confirmed <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+            <td class="check">❌ Not confirmed <span class="evidence-tag evidence-tag--gap">EVIDENCE GAP</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--spacing-lg);border-top:1px solid var(--color-hairline-soft);">
+        <blockquote style="margin:0;">Three standout differentiators: (1) Copilot Studio's AI-generated <strong>Themes</strong> clusters real user questions weekly — uniquely useful for discovering intent gaps without manual tagging. (2) Vertex AI's <strong>Online Monitors</strong> is the only continuous production evaluation system in the set — live traffic scored automatically, not just test sets. (3) Agentforce's <strong>error type taxonomy</strong> (system / API / agent logic) gives operators a first triage lens without reading full traces. <span class="evidence-tag evidence-tag--interpretation">INTERPRETATION</span></blockquote>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── SOURCES ── -->
+  <section id="sources">
+    <div class="section-header">
+      <div class="section-eyebrow">Research references</div>
+      <h2 class="section-title">Sources</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-xl);">
+      <div>
+        <div class="section-eyebrow" style="margin-bottom:var(--spacing-base);">High confidence — product docs</div>
+        <ul class="source-list">
+          <li class="source-list__item">
+            <a href="https://raw.githubusercontent.com/langflow-ai/langflow/main/README.md" class="source-list__link" target="_blank">Langflow README</a>
+            <span class="source-list__meta">GitHub · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://docs.langflow.org/get-started-quickstart" class="source-list__link" target="_blank">Langflow Quickstart</a>
+            <span class="source-list__meta">Official docs · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio" class="source-list__link" target="_blank">Copilot Studio Overview</a>
+            <span class="source-list__meta">Microsoft Learn · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview" class="source-list__link" target="_blank">Vertex AI Agent Platform Docs</a>
+            <span class="source-list__meta">Google Cloud Docs · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/" class="source-list__link" target="_blank">n8n AI Agent Node Docs</a>
+            <span class="source-list__meta">n8n Docs · July 2026</span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-eyebrow" style="margin-bottom:var(--spacing-base);">Medium confidence — product pages &amp; blogs</div>
+        <ul class="source-list">
+          <li class="source-list__item">
+            <a href="https://langflow.org" class="source-list__link" target="_blank">Langflow.org product page</a>
+            <span class="source-list__meta">Vendor · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://n8n.io/ai" class="source-list__link" target="_blank">n8n AI product page</a>
+            <span class="source-list__meta">Vendor · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://blog.n8n.io/ai-agents/" class="source-list__link" target="_blank">n8n AI Agents blog post</a>
+            <span class="source-list__meta">n8n Blog · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://cloud.google.com/products/agent-builder" class="source-list__link" target="_blank">Vertex AI Agent Builder product page</a>
+            <span class="source-list__meta">Google Cloud · July 2026</span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-eyebrow" style="margin-bottom:var(--spacing-base);">Low confidence / blocked</div>
+        <ul class="source-list">
+          <li class="source-list__item">
+            <a href="https://www.salesforce.com/agentforce/" class="source-list__link" target="_blank">Salesforce Agentforce</a>
+            <span class="source-list__meta">Vendor · Access blocked (403) · July 2026</span>
+          </li>
+          <li class="source-list__item">
+            <a href="https://developer.salesforce.com/docs/einstein/genai/guide/agentforce.html" class="source-list__link" target="_blank">Agentforce Developer Docs</a>
+            <span class="source-list__meta">Salesforce Developers · Access blocked (404) · July 2026</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── METHOD NOTE ── -->
+  <section id="method">
+    <div class="section-header">
+      <div class="section-eyebrow">Research method</div>
+      <h2 class="section-title">Method Note</h2>
+    </div>
+    <div class="body-text">
+      <p><strong>Research date:</strong> July 30, 2026.</p>
+      <p><strong>Method:</strong> Text-only web research via WebFetch on publicly accessible URLs. No hands-on product access. UI descriptions are inferred from documentation, README files, official product pages, and blog posts. All inferred claims are tagged INTERPRETATION.</p>
+      <p><strong>What was inaccessible:</strong> Salesforce Agentforce documentation returned 403 Forbidden or 404 errors across all attempted URLs. Agentforce coverage in this report is significantly thinner than the other four tools — treat Agentforce claims as lower confidence and consider supplementing with direct product access or Salesforce documentation via authenticated means. G2 and Capterra user reviews were also blocked (403), so no user sentiment data is included.</p>
+      <p><strong>What was left out:</strong> Pricing, performance benchmarks, deployment infrastructure details, accessibility audit results, and hands-on usability observations. These would require direct product access or primary research.</p>
+      <p><strong>What changed on verification:</strong> Vertex AI Agent Builder has been rebranded as part of the "Gemini Enterprise Agent Platform" — some documentation URLs redirect. This report uses both names where relevant to maintain clarity.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <span class="footer__text">Platform Experience &amp; Design · 2026</span>
+    <span class="footer__text">Generated with comparing-designs skill</span>
+  </div>
+</footer>
+
+</body>
+</html>
