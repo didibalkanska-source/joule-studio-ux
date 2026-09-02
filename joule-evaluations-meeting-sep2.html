@@ -180,7 +180,8 @@
       <div class="tag-bar">
         <span class="tag">Agent Evaluations</span>
         <span class="tag purple">41 min</span>
-        <span class="tag orange">13 open questions</span>
+        <span class="tag green">9 answered</span>
+        <span class="tag orange">3 pending</span>
         <span class="tag gray">6 people</span>
       </div>
     </div>
@@ -251,35 +252,36 @@
             <td class="col-num">2</td>
             <td>
               <div class="q-text">Should editing scenarios be allowed for running or completed evaluations?</div>
+              <div class="q-detail"><strong>Running:</strong> No &nbsp;·&nbsp; <strong>Completed:</strong> Yes — Jacob Hornberger</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">3</td>
             <td>
               <div class="q-text">Is a "Last 7 Days" filter on the Evaluations list needed at all?</div>
-              <div class="q-detail">Diana and Diego questioned its value. Gaurav will expose a <code style="font-size:0.78rem;background:#f3f4f6;padding:1px 4px;border-radius:3px;">number of days</code> API param mid-next week.</div>
+              <div class="q-detail">Diana and Diego questioned its value. Gaurav will expose a <code style="font-size:0.78rem;background:#f3f4f6;padding:1px 4px;border-radius:3px;">number of days</code> API param mid-next week.<br/><strong>Jacob:</strong> Yes — we need to be able to show a trend. Comparing different eval runs against each other is important.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">4</td>
             <td>
               <div class="q-text">Should the UI enforce a character/size limit for scenarios?</div>
-              <div class="q-detail">Gaurav: BE silently skips files over 5,000 chars. UI-side limits recommended.</div>
+              <div class="q-detail">Gaurav: BE silently skips files over 5,000 chars. UI-side limits recommended.<br/><strong>Jacob:</strong> Yes — support Gaurav's PoV, limits should be applied.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">5</td>
             <td>
               <div class="q-text">Should evaluations be supported for Agent Extensions (not just agents)?</div>
-              <div class="q-detail">Diego: essential for the partner ecosystem and shipping extensions.</div>
+              <div class="q-detail">Diego: essential for the partner ecosystem and shipping extensions.<br/><strong>Jacob:</strong> Depends on GA availability of Extensions. Not a must for now — key focus and first priority is agents only. Extensions is second priority. Extensions should follow the same UX when extensions become available. <em>Keep as a separate discussion — current goal is to get the AGENT evals scenario E2E release-ready from a UX perspective first.</em></div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
@@ -303,44 +305,45 @@
             <td class="col-num">8</td>
             <td>
               <div class="q-text">Should view-only users and Administrators be able to edit scenarios/evaluations?</div>
-              <div class="q-detail">Logical answer: no for view-only, but needs explicit PM decision.</div>
+              <div class="q-detail">Logical answer: no for view-only, but needs explicit PM decision.<br/><strong>Jacob:</strong> No.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">9</td>
             <td>
               <div class="q-text">Feature flag / rollout strategy?</div>
-              <div class="q-detail">No flag currently. Gaurav: BE can add one if needed.</div>
+              <div class="q-detail">No flag currently. Gaurav: BE can add one if needed.<br/><strong>Jacob:</strong> No feature flag — target is release End of September.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">10</td>
             <td>
               <div class="q-text">Should the evaluation list show which solution version was evaluated?</div>
-              <div class="q-detail">Diego: important for comparing versions. Gaurav: semantic version is in the API, but only one version can be deployed at a time.</div>
+              <div class="q-detail">Diego: important for comparing versions. Gaurav: semantic version is in the API, but only one version can be deployed at a time.<br/><strong>Jacob:</strong> Yes.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Diego + Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">11</td>
             <td>
               <div class="q-text">Should the evaluation list show the deployment environment?</div>
-              <div class="q-detail">Diego: yes, valuable context.</div>
+              <div class="q-detail">Diego: yes, valuable context.<br/><strong>Jacob:</strong> Yes.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Diego + Jacob Hornberger</span></td>
           </tr>
           <tr>
             <td class="col-num">12</td>
             <td>
               <div class="q-text">What happens to evaluations when a solution version is undeployed?</div>
+              <div class="q-detail"><strong>Jacob:</strong> Evaluation scenarios stay — the runs get deleted.</div>
             </td>
-            <td><span class="status-badge status-open">Open</span></td>
+            <td><span class="status-badge status-answered">Answered</span></td>
             <td><span class="owner-chip pm">Jacob Hornberger</span></td>
           </tr>
           <tr>
