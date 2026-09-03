@@ -330,13 +330,13 @@
       background: #fff;
     }
   </style>
-<link rel="icon" type="image/png" href="gem.png">
+<link rel="icon" type="image/png" href="../../assets/gem.png">
 </head>
 <body>
 
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="sidebar-logo-icon"><img src="gem.png" style="width:32px;height:32px;object-fit:contain;"></div>
+    <div class="sidebar-logo-icon"><img src="../../assets/gem.png" style="width:32px;height:32px;object-fit:contain;"></div>
     <div>
       <div class="sidebar-logo-text">Joule UX</div>
       
@@ -344,24 +344,24 @@
   </div>
   <nav class="sidebar-nav">
     <div class="sidebar-section-label">Overview</div>
-    <a href="index.html" class="nav-item"><span class="nav-icon">⊞</span> Dashboard</a>
+    <a href="../../index.html" class="nav-item"><span class="nav-icon">⊞</span> Dashboard</a>
     <div class="nav-divider"></div>
     <div class="sidebar-section-label">Теми</div>
-    <a href="joule-evaluations.html" class="nav-item"><span class="nav-icon">▸</span> Agent Evaluations</a>
-    <a href="joule-evaluations-flow.html" class="nav-item sub active"><span class="nav-icon">▸</span> Evaluations Flow</a>
-    <a href="joule-evaluations-meeting-sep2.html" class="nav-item sub"><span class="nav-icon">▸</span> Meeting Notes — Sep 2</a>
-    <!-- JOULE-FLOW-HIDDEN <a href="joule-ap-invoice.html" class="nav-item"><span class="nav-icon">▸</span> Joule Flow</a> -->
-    <!-- JOULE-FLOW-HIDDEN <a href="joule-flow-ap-invoice.html" class="nav-item sub"><span class="nav-icon">▸</span> AP Invoice</a> -->
-    <!-- JOULE-FLOW-HIDDEN <a href="joule-flow-discovery.html" class="nav-item sub"><span class="nav-icon">▸</span> Discovery Session</a> -->
-    <a href="SWOT Analysis_ SAP Joule Flow — Agentic Workflow.html" class="nav-item"><span class="nav-icon">▸</span> SWOT Analysis</a>
-    <a href="competitor-monitoring-eval.html" class="nav-item"><span class="nav-icon">▸</span> Monitoring Research</a>
-        <a href="control-tower-design-review.html" class="nav-item sub"><span class="nav-icon">▸</span> Design Review</a>
-    <a href="competitive-analysis.html" class="nav-item sub"><span class="nav-icon">▸</span> Competitive Analysis</a>
+    <a href="overview.html" class="nav-item"><span class="nav-icon">▸</span> Agent Evaluations</a>
+    <a href="flow.html" class="nav-item sub active"><span class="nav-icon">▸</span> Evaluations Flow</a>
+    <a href="meeting-sep2.html" class="nav-item sub"><span class="nav-icon">▸</span> Meeting Notes — Sep 2</a>
+    <!-- JOULE-FLOW-HIDDEN <a href="../flow/ap-invoice.html" class="nav-item"><span class="nav-icon">▸</span> Joule Flow</a> -->
+    <!-- JOULE-FLOW-HIDDEN <a href="../flow/ap-invoice-flow.html" class="nav-item sub"><span class="nav-icon">▸</span> AP Invoice</a> -->
+    <!-- JOULE-FLOW-HIDDEN <a href="../flow/discovery.html" class="nav-item sub"><span class="nav-icon">▸</span> Discovery Session</a> -->
+    <a href="../flow/swot.html" class="nav-item"><span class="nav-icon">▸</span> SWOT Analysis</a>
+    <a href="../monitoring/research.html" class="nav-item"><span class="nav-icon">▸</span> Monitoring Research</a>
+        <a href="../monitoring/design-review.html" class="nav-item sub"><span class="nav-icon">▸</span> Design Review</a>
+    <a href="../monitoring/competitive.html" class="nav-item sub"><span class="nav-icon">▸</span> Competitive Analysis</a>
     <div class="nav-divider"></div>
     <div class="sidebar-section-label">Reference</div>
-    <a href="joule-studio-glossary.html" class="nav-item"><span class="nav-icon">▸</span> Речник</a>
+    <a href="../reference/glossary.html" class="nav-item"><span class="nav-icon">▸</span> Речник</a>
     <a href="https://pages.github.tools.sap/I332650/Navigation-Vision/joule-studio-h2-vision/docs/?v=2" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Vision Prototype</a>
-    <a href="monitoring/index.html" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Monitoring Prototype</a>
+    <a href="../../prototype/index.html" target="_blank" class="nav-item"><span class="nav-icon">↗</span> Monitoring Prototype</a>
   </nav>
   <div class="sidebar-footer">2026<br/>Joule Studio UX Team</div>
 </aside>
@@ -460,7 +460,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> IBD flow завършен — агентът е създаден. Joule автоматично генерира evaluation сценарии базирани на tools и capabilities на агента.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-02.png" alt="Scenario Generation screen">
+      <img class="screen-img" src="../../assets/eval-screens/screen-02.png" alt="Scenario Generation screen">
       <div class="screen-body">
         <p class="screen-desc">Design tab показва пълната конфигурация на агента заедно със списъка от сценарии — едно място за преглед на "какво може агентът" и "как ще се тества". Потребителят не пише сценарии от нулата — IBD flow произвежда работещ baseline.</p>
         <table class="elements-table">
@@ -489,7 +489,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> Потребителят кликва Edit на сценарий в Design tab (design time) или кликва name link при създаване на нова evaluation (run time).</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-05.png" alt="Create/Edit Scenario screen">
+      <img class="screen-img" src="../../assets/eval-screens/screen-05.png" alt="Create/Edit Scenario screen">
       <div class="screen-body">
         <p class="screen-desc">Full структура на един тест кейс, организирана в collapsible секции. Form / Code toggle позволява превключване между guided form и raw YAML. Joule може да auto-fill <strong>Expected Tools</strong> и <strong>Expected Output</strong> от natural language описание — значително намалява manual effort.</p>
         <table class="elements-table">
@@ -519,7 +519,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> Потребителят toggle-ва Form → Code в Edit Scenario view.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-08.png" alt="Scenario Code View">
+      <img class="screen-img" src="../../assets/eval-screens/screen-08.png" alt="Scenario Code View">
       <div class="screen-body">
         <p class="screen-desc">Raw YAML editor за advanced users или complex сценарии, които guided form не може да изрази — напр. custom user agent behavior scripts или multi-step tool-call sequences. Поддържа <code>fixed_message</code> (single-turn) и <code>dynamic_conversation</code> (multi-turn, симулиран потребител).</p>
         <table class="elements-table">
@@ -560,7 +560,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> Агентът е deployed. Потребителят навигира към Evaluations tab. Няма изпълнени evaluations — системата показва empty state.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-03.png" alt="Evaluation History empty state">
+      <img class="screen-img" src="../../assets/eval-screens/screen-03.png" alt="Evaluation History empty state">
       <div class="screen-body">
         <p class="screen-desc">Evaluations tab е primary entry point за всяка evaluation активност в runtime. При първо влизане показва illustrated empty state с ясен CTA — не натоварва first-time потребителя с конфигурационни опции.</p>
         <table class="elements-table">
@@ -589,7 +589,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> Потребителят е кликнал "Create Evaluation". Системата отваря New Evaluation screen с existing design-time сценарии pre-loaded. Evaluation е в <strong>Draft</strong> state.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-04.png" alt="Create Evaluation screen">
+      <img class="screen-img" src="../../assets/eval-screens/screen-04.png" alt="Create Evaluation screen">
       <div class="screen-body">
         <p class="screen-desc">New Evaluation screen дава контрол върху кои сценарии да се включат в текущия run. Потребителят review-ва, добавя или маха сценарии преди да стартира. Ако сценарии не са генерирани по някаква причина — могат да се генерират тук.</p>
         <table class="elements-table">
@@ -619,7 +619,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> Един или повече evaluations са изпълнени. Потребителят навигира към Evaluations tab — показва се history таблица и performance trend chart.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-06.png" alt="Evaluation History with data">
+      <img class="screen-img" src="../../assets/eval-screens/screen-06.png" alt="Evaluation History with data">
       <div class="screen-body">
         <p class="screen-desc">Tab-ът преминава от empty state към full data view. Performance chart показва Task Success Rate с течение на времето — regression и progression на пръв поглед без да се отварят индивидуални records. История: <em>first-eval 19% → edge-cases 64% → prompt-tweak-april 74%</em>.</p>
         <table class="elements-table">
@@ -648,7 +648,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> Потребителят кликва върху completed evaluation в таблицата. Отваря се Evaluation Results view с aggregated scores и per-scenario breakdown.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-07.png" alt="Evaluation Results screen">
+      <img class="screen-img" src="../../assets/eval-screens/screen-07.png" alt="Evaluation Results screen">
       <div class="screen-body">
         <p class="screen-desc">Terminal state на evaluation loop. Две нива: 6 KPI карти за overall run + detailed таблица per scenario. Complete tag потвърждава, че run-ът е приключил — резултатите са финални и <strong>read-only</strong>.</p>
         <table class="elements-table">
@@ -686,7 +686,7 @@
         <span class="trigger-icon">ⓘ</span>
         <span><strong>Trigger:</strong> YAML е запазен с невалидна структура (unsupported schema changes или syntax errors). Form view не може да parse-не сценария.</span>
       </div>
-      <img class="screen-img" src="eval-screens/screen-09.png" alt="Unable to Load Scenario state">
+      <img class="screen-img" src="../../assets/eval-screens/screen-09.png" alt="Unable to Load Scenario state">
       <div class="screen-body">
         <p class="screen-desc">Form view се заменя с illustrated error state. Сценарият <strong>не е изгубен</strong> — съдържанието е достъпно чрез Code view — но structured form не може да се рендира докато YAML не е поправен.</p>
         <table class="elements-table">
