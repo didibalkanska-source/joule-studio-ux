@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Townhall – Joule Studio Design · Oct 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root {
+  --bg: #0B0D1A;
+  --s1: #111428;
+  --border: rgba(255,255,255,0.08);
+  --gold: #F5C842;
+  --blue: #4D8EFF;
+  --violet: #9B6DFF;
+  --teal: #00D4AA;
+  --pink: #FF3CAC;
+  --orange: #FF8C42;
+  --text: #FFFFFF;
+  --muted: rgba(255,255,255,0.5);
+  --dim: rgba(255,255,255,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; }
+
+/* ── ENGINE ── */
+.slides { position: relative; width: 100%; height: 100vh; overflow: hidden; }
+.slide {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column; padding: 48px 72px;
+  opacity: 0; transform: translateX(60px); overflow: hidden;
+  transition: opacity 0.45s ease, transform 0.45s ease; pointer-events: none;
+}
+.slide.active  { opacity: 1; transform: translateX(0); pointer-events: all; }
+.slide.exit    { opacity: 0; transform: translateX(-60px); }
+
+/* ── ORBS ── */
+.orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(140px); z-index: 0; }
+.orb-1 { width: 600px; height: 600px; background: var(--violet); opacity: .09; top: -200px; left: -150px; }
+.orb-2 { width: 500px; height: 500px; background: var(--blue);   opacity: .09; bottom: -150px; right: -100px; }
+.orb-3 { width: 400px; height: 400px; background: var(--gold);   opacity: .05; top: 30%; right: 10%; }
+
+/* ── NAV ── */
+.nav { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 100; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); cursor: pointer; transition: all .3s; }
+.dot.active { background: var(--gold); width: 24px; border-radius: 4px; }
+.arrow {
+  position: fixed; bottom: 28px; z-index: 100;
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  font-size: 28px; width: 44px; height: 44px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
+}
+.arrow:hover { border-color: rgba(255,255,255,.3); color: var(--text); }
+.arrow.prev { right: calc(50% + 80px); }
+.arrow.next { left:  calc(50% + 80px); }
+.slide-count { position: fixed; bottom: 36px; right: 72px; font-size: 12px; color: var(--muted); font-weight: 500; z-index: 100; }
+
+/* ── SECTION HEADER ── */
+.sec-header { margin-bottom: 28px; position: relative; z-index: 1; }
+.sec-eyebrow {
+  font-size: 18px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 10px;
+}
+.sec-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--gold); }
+.sec-title { font-size: 58px; font-weight: 900; letter-spacing: -.03em; text-transform: uppercase; line-height: 1; }
+
+/* ── GRADIENTS ── */
+.g  { background: linear-gradient(90deg,var(--gold),var(--orange));   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.gb { background: linear-gradient(90deg,var(--blue),var(--violet));   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.gt { background: linear-gradient(90deg,var(--teal),var(--blue));     -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.gp { background: linear-gradient(90deg,var(--pink),var(--violet));   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.gg { background: linear-gradient(90deg,var(--gold),var(--orange) 55%,var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+/* ── SLIDE 1 ── */
+.s1-eyebrow {
+  font-size: 19px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+}
+.s1-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
+.s1-h1 { font-size: clamp(60px,9vw,120px); font-weight: 900; line-height: .88; letter-spacing: -.04em; text-transform: uppercase; margin-bottom: 32px; }
+.s1-sub { font-size: 30px; color: var(--muted); max-width: 480px; line-height: 1.6; margin-bottom: 40px; }
+.s1-meta { display: flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; width: fit-content; }
+.s1-stat { padding: 14px 30px; border-right: 1px solid var(--border); }
+.s1-stat:last-child { border-right: none; }
+.s1-n { font-size: 42px; font-weight: 900; letter-spacing: -.03em; line-height: 1; background: linear-gradient(135deg,var(--gold),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.s1-l { font-size: 18px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 4px; }
+
+/* ── SLIDE 2: AGENDA ── */
+.agenda-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; align-content: start; }
+.agenda-item { background: var(--s1); border: 1px solid var(--border); border-radius: 16px; padding: 22px 26px; display: flex; gap: 18px; align-items: center; }
+.agenda-num { font-size: 54px; font-weight: 900; letter-spacing: -.04em; line-height: 1; flex-shrink: 0; width: 72px; }
+.agenda-body h4 { font-size: 27px; font-weight: 800; margin-bottom: 4px; }
+.agenda-body span { font-size: 22px; color: var(--muted); }
+
+/* ── PHOTOS ── */
+.photo-circle {
+  width: 130px; height: 130px; border-radius: 50%;
+  object-fit: cover; object-position: center 15%;
+  border: 2px solid rgba(255,255,255,.12); flex-shrink: 0;
+}
+.photo-sq {
+  width: 88px; height: 88px; border-radius: 16px;
+  object-fit: cover; object-position: center 15%;
+  border: 1px solid rgba(255,255,255,.1); flex-shrink: 0;
+}
+.person-tile.leaver .photo-circle,
+.row-tile.leaver .photo-sq { filter: grayscale(55%); opacity: .8; }
+
+/* ── PEOPLE TILES ── */
+.people-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; flex: 1; align-content: start; }
+.person-tile {
+  background: var(--s1); border: 1px solid var(--border); border-radius: 20px;
+  padding: 26px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
+}
+.person-tile.leaver { border-style: dashed; }
+.tile-name  { font-size: 25px; font-weight: 800; line-height: 1.2; }
+.tile-role  { font-size: 21px; color: var(--muted); line-height: 1.4; }
+.tile-loc   { font-size: 21px; color: var(--blue); font-weight: 600; }
+.tile-badge { font-size: 18px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+.bn { background: rgba(0,212,170,.12); color: var(--teal); }
+.bf { background: rgba(77,142,255,.12); color: var(--blue); }
+.br { background: rgba(245,200,66,.12); color: var(--gold); }
+.bx { background: rgba(255,255,255,.06); color: var(--muted); }
+
+/* ── ROW TILES (new roles / leavers) ── */
+.row-tile { background: var(--s1); border: 1px solid var(--border); border-radius: 16px; padding: 18px 22px; display: flex; align-items: center; gap: 16px; }
+.row-tile.leaver   { border-style: dashed; }
+.row-tile.new-role { border-color: rgba(245,200,66,.2); }
+
+/* ── SURVEY ── */
+.survey-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; align-items: center; }
+.survey-big { font-size: clamp(52px,7vw,90px); font-weight: 900; letter-spacing: -.04em; text-transform: uppercase; line-height: .88; }
+.survey-info { display: flex; flex-direction: column; gap: 16px; }
+.survey-card { background: var(--s1); border: 1px solid var(--border); border-radius: 16px; padding: 22px 26px; }
+.survey-card h4 { font-size: 25px; font-weight: 700; margin-bottom: 8px; }
+.survey-card p  { font-size: 24px; color: var(--muted); line-height: 1.6; }
+.survey-date { margin-top: 12px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,60,172,.1); border: 1px solid rgba(255,60,172,.25); border-radius: 30px; padding: 6px 16px; font-size: 21px; font-weight: 700; color: var(--pink); }
+
+/* ── GA CELEBRATION ── */
+.ga-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; align-items: start; min-height: 0; }
+.ga-left { display: flex; flex-direction: column; gap: 18px; }
+.ga-big  { font-size: clamp(48px,7vw,90px); font-weight: 900; letter-spacing: -.04em; text-transform: uppercase; line-height: .88; }
+.ga-sub  { font-size: 24px; color: var(--muted); line-height: 1.65; }
+.ga-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+.ga-badge { padding: 8px 18px; border-radius: 30px; font-size: 21px; font-weight: 700; border: 1px solid; }
+.gab1 { background: rgba(245,200,66,.08); color: var(--gold); border-color: rgba(245,200,66,.3); }
+.gab2 { background: rgba(0,212,170,.08);  color: var(--teal); border-color: rgba(0,212,170,.3); }
+.kudos-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.kchip { background: rgba(77,142,255,.1); border: 1px solid rgba(77,142,255,.25); border-radius: 20px; padding: 4px 13px; font-size: 22px; font-weight: 600; color: var(--blue); }
+.q-block { background: rgba(155,109,255,.05); border-left: 3px solid var(--violet); border-radius: 10px; padding: 14px 18px; margin-top: 4px; }
+.q-block p  { font-size: 21px; color: var(--muted); font-style: italic; line-height: 1.65; }
+.q-block .qa { font-size: 19px; color: var(--violet); font-weight: 700; font-style: normal; margin-top: 6px; }
+/* Photo collage for SAP Connect */
+.connect-photos { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 8px; }
+.connect-photos img { width: 100%; aspect-ratio: 2/1; object-fit: cover; border-radius: 10px; }
+
+/* ── QBR ── */
+.qbr-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; }
+.qbr-col { background: var(--s1); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+.qbr-head { padding: 18px 24px; border-bottom: 1px solid var(--border); font-size: 21px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; display: flex; align-items: center; gap: 10px; }
+.qbr-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.qbr-item { display: flex; gap: 12px; align-items: flex-start; }
+.qbr-dot  { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+.qbr-text { font-size: 25px; font-weight: 600; line-height: 1.4; }
+.qbr-q { background: rgba(245,200,66,.04); border-left: 3px solid var(--gold); border-radius: 8px; padding: 14px 16px; }
+.qbr-q p  { font-size: 22px; color: var(--muted); font-style: italic; line-height: 1.6; }
+.qbr-q .au { font-size: 19px; color: var(--gold); font-weight: 700; font-style: normal; margin-top: 6px; }
+
+/* ── QUIZ ── */
+.quiz-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 24px; position: relative; z-index: 1; }
+.quiz-big { font-size: clamp(48px,7vw,92px); font-weight: 900; letter-spacing: -.04em; text-transform: uppercase; line-height: .88; }
+.quiz-sub { font-size: 28px; color: var(--muted); }
+.quiz-chips { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.qchip { padding: 10px 24px; border-radius: 30px; font-size: 24px; font-weight: 700; }
+.qt  { border: 1px solid rgba(0,212,170,.35);  color: var(--teal); background: rgba(0,212,170,.06); }
+.qt2 { border: 1px solid rgba(77,142,255,.35);  color: var(--blue); background: rgba(77,142,255,.06); }
+.ql  { border: 1px solid rgba(255,60,172,.35);  color: var(--pink); background: rgba(255,60,172,.06); }
+
+/* ── EVENTS ── */
+.events-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.event-item { background: var(--s1); border: 1px solid var(--border); border-radius: 14px; padding: 18px 24px; display: flex; align-items: center; gap: 20px; }
+.event-date { font-size: 24px; font-weight: 800; color: var(--gold); white-space: nowrap; min-width: 100px; }
+.event-div  { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; }
+.event-name { font-size: 27px; font-weight: 700; }
+.event-loc  { font-size: 21px; color: var(--muted); margin-top: 3px; }
+
+/* ── CODE CAMPS ── */
+.camps-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; flex: 1; align-items: start; }
+.camps-info { display: flex; flex-direction: column; gap: 14px; }
+.camps-quote { background: var(--s1); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: 12px; padding: 18px 20px; font-size: 24px; font-style: italic; color: var(--muted); line-height: 1.65; }
+.camps-detail { background: var(--s1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; font-size: 24px; color: var(--text); line-height: 1.7; }
+.camps-detail strong { color: var(--gold); }
+.camps-sched { display: flex; flex-direction: column; gap: 10px; }
+.camp-item { background: var(--s1); border: 1px solid var(--border); border-radius: 12px; padding: 13px 18px; display: flex; align-items: center; gap: 14px; }
+.camp-item.sofia { border-color: rgba(245,200,66,.3); background: rgba(245,200,66,.04); }
+.camp-date { font-size: 21px; font-weight: 700; color: var(--blue); min-width: 76px; }
+.camp-item.sofia .camp-date { color: var(--gold); }
+.camp-loc  { font-size: 24px; font-weight: 600; }
+
+/* ── BUMPY WAY ── */
+.bump-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
+.bump-card { background: var(--s1); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+.bump-card.after { border-color: rgba(0,212,170,.25); }
+.bump-head { padding: 14px 22px; border-bottom: 1px solid var(--border); font-size: 21px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.bump-screenshot { flex: 1; overflow: hidden; background: #0a0c18; display: flex; align-items: center; justify-content: center; }
+.bump-screenshot img { width: 100%; height: 100%; object-fit: contain; object-position: center top; padding: 12px; }
+
+/* ── SQUAD SET-UP ── */
+.squads-wrap { flex: 1; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+.squads-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; flex: 1; }
+.sq-col { background: var(--s1); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+.sq-col.hitl { border-color: rgba(245,200,66,.3); }
+.sq-head { padding: 10px 10px; font-size: 18px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: .05em; background: rgba(77,142,255,.1); color: var(--blue); border-bottom: 1px solid var(--border); }
+.sq-col.hitl .sq-head { color: var(--gold); background: rgba(245,200,66,.08); }
+.sq-desc   { padding: 10px 10px; font-size: 18px; color: var(--muted); line-height: 1.45; border-bottom: 1px solid var(--border); flex: 1; }
+.sq-pm     { padding: 9px 10px; font-size: 21px; font-weight: 600; text-align: center; color: var(--pink);   background: rgba(255,60,172,.06); }
+.sq-design { padding: 9px 10px; font-size: 21px; font-weight: 600; text-align: center; color: var(--violet); background: rgba(155,109,255,.06); }
+.sq-col.hitl .sq-design { color: var(--gold); background: rgba(245,200,66,.06); }
+.squads-legend { display: flex; gap: 20px; font-size: 21px; font-weight: 600; }
+.leg { display: flex; align-items: center; gap: 6px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+/* ── Q&A ── */
+.qa-wrap { flex: 1; position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 64px; }
+.qa-big { font-size: clamp(80px,13vw,160px); font-weight: 900; letter-spacing: -.05em; text-transform: uppercase; line-height: .85; }
+.qa-big .gg { background: linear-gradient(90deg,var(--blue),var(--violet) 50%,var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.qa-cat { width: 280px; height: 280px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,.08); }
+.qa-right { display: flex; flex-direction: column; gap: 12px; }
+.qa-sub { font-size: 28px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="slides" id="slides">
+
+  <!-- 1 TITLE -->
+  <div class="slide active">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1;">
+      <div class="s1-eyebrow">SAP BAIP · Joule Studio Design</div>
+      <h1 class="s1-h1">Town<span class="gg">hall</span></h1>
+      <p class="s1-sub">Team updates, celebrations, and what's coming next.</p>
+      <div class="s1-meta">
+        <div class="s1-stat"><div class="s1-n">Oct 9</div><div class="s1-l">2026</div></div>
+        <div class="s1-stat"><div class="s1-n">5</div><div class="s1-l">Topics</div></div>
+        <div class="s1-stat"><div class="s1-n">GA</div><div class="s1-l">We did it!</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 AGENDA -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Overview</div>
+      <div class="sec-title">Agenda</div>
+    </div>
+    <div class="agenda-grid" style="position:relative;z-index:1;">
+      <div class="agenda-item">
+        <div class="agenda-num" style="color:var(--blue)">01</div>
+        <div class="agenda-body"><h4>Team Updates</h4><span>Daria</span></div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num" style="color:var(--gold)">02</div>
+        <div class="agenda-body"><h4>Celebrations &amp; Achievements</h4><span>Daria</span></div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num" style="color:var(--violet)">03</div>
+        <div class="agenda-body"><h4>Quiz Time</h4><span>Kate</span></div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num" style="color:var(--teal)">04</div>
+        <div class="agenda-body"><h4>What's Next</h4><span>Konrad</span></div>
+      </div>
+      <div class="agenda-item" style="grid-column:1/-1;max-width:calc(50% - 7px)">
+        <div class="agenda-num" style="color:var(--pink)">05</div>
+        <div class="agenda-body"><h4>Q&amp;A</h4><span>All</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 NEW MEMBERS & FELLOWS -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Team Updates</div>
+      <div class="sec-title">New Members <span class="gb">&amp; Fellows</span></div>
+    </div>
+    <div class="people-grid" style="position:relative;z-index:1;">
+      <div class="person-tile">
+        <img class="photo-circle" src="img/nikolay.jpeg" alt="Nikolay Todorvsky">
+        <div class="tile-badge bn">New</div>
+        <div class="tile-name">Nikolay Todorvsky</div>
+        <div class="tile-role">UX Designer</div>
+        <div class="tile-loc">📍 Sofia</div>
+      </div>
+      <div class="person-tile fellow">
+        <img class="photo-circle" src="img/kalina.jpeg" alt="Kalina Popova">
+        <div class="tile-badge bf">Fellow</div>
+        <div class="tile-name">Kalina Popova</div>
+        <div class="tile-role">UX Designer Fellow</div>
+        <div class="tile-loc">📍 Sofia</div>
+      </div>
+      <div class="person-tile fellow">
+        <img class="photo-circle" src="img/zahra.jpg" alt="Zahra Haji Ali Beigi">
+        <div class="tile-badge bf">Fellow</div>
+        <div class="tile-name">Zahra Haji Ali Beigi</div>
+        <div class="tile-role">DesignOps &amp; UX Leadership Fellow</div>
+        <div class="tile-loc">📍 Berlin</div>
+      </div>
+      <div class="person-tile fellow">
+        <img class="photo-circle" src="img/shao.jpg" alt="Shao Yu Lin">
+        <div class="tile-badge bf">Student</div>
+        <div class="tile-name">Shao Yu Lin</div>
+        <div class="tile-role">UX Student</div>
+        <div class="tile-loc">📍 Munich</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 NEW ROLES + LEAVERS -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Team Updates</div>
+      <div class="sec-title">New Roles <span class="g">&amp; Leavers</span></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;position:relative;z-index:1;">
+      <div>
+        <div style="font-size:18px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">New Roles</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="row-tile new-role">
+            <img class="photo-sq" src="img/caroline.jpg" alt="Caroline Swicegood">
+            <div>
+              <div class="tile-badge br" style="margin-bottom:7px;">New Role</div>
+              <div class="tile-name">Caroline Swicegood</div>
+              <div class="tile-role">UX Content Designer Cross Role</div>
+            </div>
+          </div>
+          <div class="row-tile new-role">
+            <img class="photo-sq" src="img/kathryn.jpg" alt="Kathryn Fübbeker">
+            <div>
+              <div class="tile-badge br" style="margin-bottom:7px;">New Role</div>
+              <div class="tile-name">Kathryn Fübbeker</div>
+              <div class="tile-role">Design Ops</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Leavers</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="row-tile leaver">
+            <img class="photo-sq" src="img/andreas.png" alt="Andreas Winkenbach">
+            <div>
+              <div class="tile-badge bx" style="margin-bottom:7px;">Farewell</div>
+              <div class="tile-name">Andreas Winkenbach</div>
+              <div class="tile-role">UX Designer</div>
+            </div>
+          </div>
+          <div class="row-tile leaver">
+            <img class="photo-sq" src="img/kristina.jpg" alt="Kristina Schmidt">
+            <div>
+              <div class="tile-badge bx" style="margin-bottom:7px;">Farewell</div>
+              <div class="tile-name">Kristina Schmidt</div>
+              <div class="tile-role">UA/UR Student</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 UNFILTERED -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-title" style="font-size:52px;white-space:nowrap;"><span class="gp">#Unfiltered</span></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:22px;position:relative;z-index:1;">
+      <div style="font-size:32px;color:var(--text);line-height:1.6;">The #unfiltered survey is live and runs until October 13.</div>
+      <div style="font-size:32px;color:var(--muted);line-height:1.6;">Please take the time to fill out the survey if you have not done so already.</div>
+      <div style="flex:0 0 auto;overflow:hidden;border-radius:16px;">
+        <img src="img/unfiltered_widget.jpg" alt="#Unfiltered survey widget"
+             style="width:100%;height:auto;display:block;">
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 GA CELEBRATION + SAP CONNECT -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Celebrations &amp; Achievements</div>
+      <div class="sec-title">Congratulations <span class="g">on GA!</span></div>
+    </div>
+    <div class="ga-layout" style="position:relative;z-index:1;">
+      <div class="ga-left">
+        <div class="ga-big">We<br/><span class="g">Did It!</span></div>
+        <div class="ga-sub">Joule Studio has reached General Availability — an enormous team effort across design, product, and engineering.</div>
+        <div class="ga-badges">
+          <div class="ga-badge gab1">🎉 General Availability</div>
+          <div class="ga-badge gab2">✓ Shipped</div>
+        </div>
+        <div style="font-size:19px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);">@SAP Connect · Kudos to the prototype team</div>
+        <div class="kudos-row">
+          <span class="kchip">Barbara</span><span class="kchip">Felipe</span>
+          <span class="kchip">Nathan</span><span class="kchip">Shao</span>
+          <span class="kchip">Diego</span><span class="kchip">Darin</span>
+        </div>
+        <div class="q-block">
+          <p>"Joule Studio looks amazing! There have been so many enhancements and UI improvements, and it is so much nicer to demo. The new lifecycle features and evaluations will show really well tomorrow."</p>
+          <div class="qa">— Shannon Lapekas, 06.10.26</div>
+        </div>
+      </div>
+      <div class="connect-photos">
+        <img src="img/connect1.jpg" alt="SAP Connect booth">
+        <img src="img/connect2.jpg" alt="SAP Connect presentation">
+        <img src="img/connect3.jpg" alt="SAP Connect team">
+        <img src="img/connect4.jpg" alt="SAP Connect dinner">
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 QBR Q3 -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Celebrations &amp; Achievements</div>
+      <div class="sec-title">Quarterly Business <span class="g">Review — Q3</span></div>
+    </div>
+    <div class="qbr-layout" style="position:relative;z-index:1;">
+      <div class="qbr-col">
+        <div class="qbr-head" style="color:var(--blue)">🎯 Focus Topics for Q3</div>
+        <div class="qbr-body">
+          <div class="qbr-item"><div class="qbr-dot" style="background:var(--blue)"></div><div class="qbr-text">WorkZone Content Authoring</div></div>
+          <div class="qbr-item"><div class="qbr-dot" style="background:var(--teal)"></div><div class="qbr-text">Partner MVP Flow</div></div>
+          <div class="qbr-item"><div class="qbr-dot" style="background:var(--violet)"></div><div class="qbr-text">Dovetail DigitalTwin</div></div>
+          <div class="qbr-item"><div class="qbr-dot" style="background:var(--gold)"></div><div class="qbr-text">Migration to JS</div></div>
+        </div>
+      </div>
+      <div class="qbr-col">
+        <div class="qbr-head" style="color:var(--gold)">💬 Feedback We Got</div>
+        <div class="qbr-body">
+          <div class="qbr-q">
+            <p>"Automation &amp; standardization across the teams. If this is a feasible way to do research we should see that other clusters follow the lead. Great work!"</p>
+            <div class="au">— Goetz B.</div>
+          </div>
+          <div class="qbr-q" style="margin-top:8px;">
+            <p>"Team, this is great work looking after the most critical pieces for the Joule (Studio) ecosystem! Once we are GA our endeavor will surely shift towards user adoption and customer feedback."</p>
+            <div class="au">— Nico</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 QUIZ -->
+  <div class="slide">
+    <div class="quiz-center">
+      <div style="font-size:18px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);">Kate presents</div>
+      <div class="quiz-big">Two Truths<br/><span class="gp">One Lie</span></div>
+      <div class="quiz-sub">Manager Edition — can you spot the lie?</div>
+      <div class="quiz-chips">
+        <div class="qchip qt">Truth ✓</div>
+        <div class="qchip qt2">Truth ✓</div>
+        <div class="qchip ql">Lie ✗</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 UPCOMING EVENTS -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">What's Next — Konrad</div>
+      <div class="sec-title">Upcoming <span class="gb">Events</span></div>
+    </div>
+    <div class="events-list" style="position:relative;z-index:1;">
+      <div class="event-item">
+        <div class="event-date">Oct 12–23</div>
+        <div class="event-div"></div>
+        <div><div class="event-name">AIOAI Workshop</div><div class="event-loc">📍 Potsdam</div></div>
+      </div>
+      <div class="event-item">
+        <div class="event-date">Oct 27–29</div>
+        <div class="event-div"></div>
+        <div><div class="event-name">SAP TechEd Berlin 2026</div><div class="event-loc">📍 Berlin</div></div>
+      </div>
+      <div class="event-item">
+        <div class="event-date">Nov 12–13</div>
+        <div class="event-div"></div>
+        <div><div class="event-name">Partner Engagement Days</div><div class="event-loc">📍 SAP Labs Munich</div></div>
+      </div>
+      <div class="event-item">
+        <div class="event-date">Nov–Dec</div>
+        <div class="event-div"></div>
+        <div><div class="event-name">SAP AI Code Camps</div><div class="event-loc">Multiple locations — see next slide</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 AI CODE CAMPS -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">What's Next</div>
+      <div class="sec-title">SAP AI <span class="gt">Code Camps</span></div>
+    </div>
+    <div class="camps-layout" style="position:relative;z-index:1;">
+      <div class="camps-info">
+        <div class="camps-quote">"SAP AI Code Camp is a hands-on, immersive experience where cross-functional teams build working AI solutions against real backlog challenges — and demo them on Day 3."</div>
+        <div class="camps-detail">Teams: <strong>1 UX Designer</strong> + 1 Product Manager + 1 Engineer.<br/>Onsite, full-time for three days.<br/><br/>A great opportunity to try your <strong>vibe-coding skills!</strong><br/>Who would be interested in taking part?</div>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;">Schedule &amp; Locations</div>
+        <div class="camps-sched">
+          <div class="camp-item"><div class="camp-date">Nov 3–5</div><div class="camp-loc">Raanana</div></div>
+          <div class="camp-item"><div class="camp-date">Nov 3–5</div><div class="camp-loc">Paris</div></div>
+          <div class="camp-item"><div class="camp-date">Nov 16–18</div><div class="camp-loc">Sofia</div></div>
+          <div class="camp-item"><div class="camp-date">Nov 16–18</div><div class="camp-loc">Bangalore</div></div>
+          <div class="camp-item"><div class="camp-date">Nov 17–19</div><div class="camp-loc">Walldorf</div></div>
+          <div class="camp-item"><div class="camp-date">Dec 1–3</div><div class="camp-loc">Bangalore</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 BUMPY WAY TO GA -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">What's Next</div>
+      <div class="sec-title">Our Bumpy <span class="g">Way to GA</span></div>
+    </div>
+    <div class="bump-layout" style="position:relative;z-index:1;">
+      <div class="bump-card">
+        <div class="bump-head" style="color:var(--muted)">⬅ Before</div>
+        <div class="bump-screenshot">
+          <img src="img/ga_before.png" alt="Before GA">
+        </div>
+      </div>
+      <div class="bump-card after">
+        <div class="bump-head" style="color:var(--teal)">✓ After (GA)</div>
+        <div class="bump-screenshot">
+          <img src="img/ga_after.png" alt="After GA">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12 TESTING JOULE STUDIO -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">What's Next</div>
+      <div class="sec-title">Testing <span class="gt">Joule Studio</span></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:20px;justify-content:center;position:relative;z-index:1;max-width:860px;">
+      <a href="https://cam.int.sap/cam/ui/admin?item=request&profile_uuid=FA163EF13B451FD19ADCF43B5FEF4000" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--s1);border:1px solid rgba(77,142,255,.25);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;transition:border-color .2s;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(77,142,255,.12);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;">🔑</div>
+          <div style="min-width:0;flex:1;">
+            <div style="font-size:21px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:6px;">Get access</div>
+            <div style="font-size:14px;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">https://cam.int.sap/cam/ui/admin?item=request&amp;profile_uuid=FA163EF13B451FD19ADCF43B5FEF4000</div>
+          </div>
+        </div>
+      </a>
+      <a href="https://0210824905.eu12.sapdas.cloud.sap/new/build" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--s1);border:1px solid rgba(0,212,170,.25);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(0,212,170,.12);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;">🚀</div>
+          <div style="min-width:0;flex:1;">
+            <div style="font-size:21px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:6px;">Try it out</div>
+            <div style="font-size:14px;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">https://0210824905.eu12.sapdas.cloud.sap/new/build</div>
+          </div>
+        </div>
+      </a>
+      <a href="https://github.tools.sap/BUILD/scenarios/blob/main/JOULESTUDIOTEST.md" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--s1);border:1px solid rgba(155,109,255,.25);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(155,109,255,.12);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;">📖</div>
+          <div style="min-width:0;flex:1;">
+            <div style="font-size:21px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--violet);margin-bottom:6px;">More</div>
+            <div style="font-size:14px;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">https://github.tools.sap/BUILD/scenarios/blob/main/JOULESTUDIOTEST.md</div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 13 SQUAD SET-UP -->
+  <div class="slide">
+    <div class="sec-header">
+      <div class="sec-eyebrow">What's Next</div>
+      <div class="sec-title">New Squad <span class="gb">Set-Up</span></div>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;width:100%;">
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Partner</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">Partner journey, Marketplace</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:var(--pink);">Sumit</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Konrad</div>
+          </div>
+        </div>
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Design Time</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">Agent, N8N, apps creation, content authoring, evals</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:rgba(255,255,255,.2);">—</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Konrad</div>
+          </div>
+        </div>
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Lifecycle</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">Deployment, Sharing, Collaboration, Landscape</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:var(--pink);">Oliver</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Eran</div>
+          </div>
+        </div>
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Vision Work</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">New UI, Guidelines, integrations, Visions, experimentations</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:var(--pink);">Holger</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Eran</div>
+          </div>
+        </div>
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Admin</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">Admin onboarding, Monitoring</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:var(--pink);">Omer</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Eran / Sem</div>
+          </div>
+        </div>
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Migration</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">Artifact migration</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:var(--pink);">Arkamita</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Sem</div>
+          </div>
+        </div>
+
+        <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1;">
+          <div>
+            <div style="font-size:17px;font-weight:900;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">HITL</div>
+            <div style="font-size:14px;color:var(--muted);line-height:1.4;">Human in the Lead and tasks in JW</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:10px;">
+            <div style="font-size:17px;font-weight:600;color:var(--pink);">Ivaylo</div>
+            <div style="font-size:17px;font-weight:600;color:var(--violet);">Diana</div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 14 Q&A -->
+  <div class="slide">
+    <div class="qa-wrap" style="justify-content:center;">
+      <div style="text-align:center;">
+        <div class="qa-big"><span class="gg">Q&amp;A</span></div>
+        <div class="qa-sub" style="margin-top:12px;">Questions? The floor is yours.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav" id="nav"></div>
+<button class="arrow prev" onclick="prev()">‹</button>
+<button class="arrow next" onclick="next()">›</button>
+<div class="slide-count" id="slideCount">1 / 14</div>
+
+<script>
+const slides  = document.querySelectorAll('.slide');
+const navEl   = document.getElementById('nav');
+const countEl = document.getElementById('slideCount');
+let current = 0;
+
+slides.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = () => goTo(i);
+  navEl.appendChild(d);
+});
+const dots = document.querySelectorAll('.dot');
+
+function goTo(n) {
+  if (n===current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  const prev = current; current = n;
+  slides[current].classList.add('active');
+  setTimeout(() => slides[prev].classList.remove('exit'), 450);
+  dots.forEach((d,i) => d.classList.toggle('active', i===current));
+  countEl.textContent = (current+1)+' / '+slides.length;
+}
+function next() { if (current<slides.length-1) goTo(current+1); }
+function prev() { if (current>0) goTo(current-1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();next();}
+  if (e.key==='ArrowLeft' ||e.key==='ArrowUp')               {e.preventDefault();prev();}
+});
+let startX=0;
+document.addEventListener('touchstart', e => { startX=e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const d=startX-e.changedTouches[0].clientX;
+  if (Math.abs(d)>50) d>0?next():prev();
+});
+</script>
+</body>
+</html>
